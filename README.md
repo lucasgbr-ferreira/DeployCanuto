@@ -67,6 +67,6 @@ Assim que a primeira versão do sistema estiver disponível, deverá complementa
 
 * **Scrum Master → João**  
 * **Dev Lead → Lucas**  
-* **PO / Dev Sup → Pedro**  
-* **Marketing / Dev Sup → Guilherme**  
-* **Dev Sup → Gabriela**  
+* **PO / Dev → Pedro**  
+* **Marketing / Dev → Guilherme**  
+* **Dev → Gabriela**  
