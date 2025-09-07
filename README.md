@@ -2,7 +2,7 @@
 
 `Sistemas de Informação`  
 `Trabalho Interdisciplinar: Aplicações para Processos de Negócios`  
-`2° semestre`
+`3° semestre`
 
 Desenvolvimento de uma plataforma de **e-commerce SaaS** voltada para **concessionárias de baixa estrutura**, alinhada à **ODS 16 – Paz, Justiça e Instituições Eficazes**. O sistema promove **transparência, confiança, inclusão digital e governança ética** no processo de compra e venda de veículos, permitindo que pequenas concessionárias compitam de forma justa com grandes players.  
 
