@@ -65,7 +65,7 @@ Assim que a primeira versão do sistema estiver disponível, deverá complementa
 
 ## Divisão das Funções
 
-* **Scrum Master → João**  
+* **Scrum Master / Dev → João**  
 * **Dev Lead → Lucas**  
 * **PO / Dev → Pedro**  
 * **Marketing / Dev → Guilherme**  
