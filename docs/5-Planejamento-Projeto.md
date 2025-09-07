@@ -10,7 +10,7 @@
 - _Scrum master_: AlunaX
 - Protótipos: AlunoY
 - Testes: AlunoK
-- Documentação: AlunaZ
+- Documentação: Mateus Souza Campos
 
 ### Sprint 2
 - _Scrum master_: AlunaY
@@ -26,12 +26,12 @@
 
 Atualizado em: 21/04/2024
 
-| Responsável   | Tarefa/Requisito | Iniciado em    | Prazo      | Status | Terminado em    |
-| :----         |    :----         |      :----:    | :----:     | :----: | :----:          |
-| AlunaX        | Introdução | 01/02/2024     | 07/02/2024 | ✔️    | 05/01/2005      |
-| AlunaZ        | Objetivos    | 03/02/2024     | 10/02/2024 | 📝    |                 |
-| AlunoY        | Histórias de usuário  | 01/01/2024     | 07/01/2005 | ⌛     |                 |
-| AlunoK        | Personas 1  |    01/01/2024        | 12/02/2005 | ❌    |       |
+| Responsável         | Tarefa/Requisito             | Iniciado em    | Prazo      | Status | Terminado em    |
+| :----               |    :----                     |      :----:    | :----:     | :----: | :----:          |
+| Mateus Souza        |  Custos e pessoal do projeto | 01/09/2025     | 08/09/2025 |✔️     | 01/09/2005      |
+| AlunaZ              | Objetivos                    | 03/02/2024     | 10/02/2024 |📝     |                 |
+| AlunoY              | Histórias de usuário         | 01/01/2024     | 07/01/2005 |⌛     |                 |
+| AlunoK              | Personas 1                   |  01/01/2024    | 12/02/2005 |❌     |                 |
 
 ## Sprint 2
 
