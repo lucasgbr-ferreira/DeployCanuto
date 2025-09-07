@@ -1,4 +1,4 @@
-# 🚗 Canutors Motors – Plataforma SaaS para Concessionárias de Baixa Estrutura
+# Canutors Motors – Plataforma SaaS para Concessionárias de Baixa Estrutura
 
 **ODS 16 – Paz, Justiça e Instituições Eficazes**  
 **Objetivo:** Transparência, confiança e inclusão digital no mercado automotivo.
