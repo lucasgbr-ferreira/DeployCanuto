@@ -25,13 +25,24 @@ Lembre-se que você deve ser enumerar e descrever precisamente e personalizada t
 ## Histórias de Usuários
 
 Com base na análise das personas forma identificadas as seguintes histórias de usuários:
+ 
+<img width="844" height="138" alt="image" src="https://github.com/user-attachments/assets/0b8771ab-9a76-4bd8-a44b-6b0bc2dd9cd1" />
 
-|EU COMO... `PERSONA`| QUERO/PRECISO ... `FUNCIONALIDADE` |PARA ... `MOTIVO/VALOR`                 |
-|--------------------|------------------------------------|----------------------------------------|
-|Usuário do sistema  | Registrar minhas tarefas           | Não esquecer de fazê-las               |
-|Administrador       | Alterar permissões                 | Permitir que possam administrar contas |
 
-Apresente aqui as histórias de usuário que são relevantes para o projeto de sua solução. As Histórias de Usuário consistem em uma ferramenta poderosa para a compreensão e elicitação dos requisitos funcionais e não funcionais da sua aplicação. Se possível, agrupe as histórias de usuário por contexto, para facilitar consultas recorrentes à essa parte do documento.
+Usuários Internos (Primários): 
+
+ - Funcionários do Instituto atualizam os dados que antes estavam na planilha (cadastros, atendimentos, relatórios) e precisam de um painel interno para gerenciar e visualizar essas informações.
+ - Gestores/Administradores do Instituto visualizam relatórios e estatísticas, gerenciam permissões dos usuários internos.
+
+Usuários Externos (Secundários): 
+
+ - Pessoas da Comunidade não acessam dados internos. Precisam apenas de um meio de contato (formulário, chat ou e-mail).
+ - Secretária da Saúde dos Municípios entram em contato com o instituto para obter informações específicas e enviam os pacientes até o instituto.
+
+ Stakeholders Chave:
+
+ Diretoria/Coordenação do instituto decide os requisitos principais do sistemae quer maior organização e visibilidade dos dados.
+ 
 
 > **Links Úteis**:
 > - [Histórias de usuários com exemplos e template](https://www.atlassian.com/br/agile/project-management/user-stories)
