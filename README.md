@@ -12,10 +12,11 @@ A plataforma visa **digitalizar processos**, disponibilizando ferramentas acess√
 
 ## Integrantes
 
-* Mateus Souza Campos  
-* Paula Bessa  
-* Gabriel Alves  
-* Vitor Carvalho  
+* Jo√£o Victor Soares 
+* Pedro Canuto
+* Lucas Gabriel Ferreira 
+* Guilherme Henrique Souza
+* Gabriela Chaves
 
 ## Orientador
 
