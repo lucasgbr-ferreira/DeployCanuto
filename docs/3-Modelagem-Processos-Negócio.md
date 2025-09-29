@@ -4,10 +4,10 @@
 
 A modelagem **AS IS** reflete os processos de registro e venda de veículos de uma concessionária de forma isolada e com gargalos visíveis, comuns em ambientes com pouca automação. O processo de Registro de Veículos mostra uma sequência linear de tarefas, desde a compra até o anúncio manual no Instagram, com a possibilidade de modificações e um registro em um "banco de dados físico". O processo de Venda de Veículos detalha a interação com o cliente, desde a escolha do anúncio até o fechamento da venda, com etapas que dependem de agendamentos e contato manual.
 
-
----
 <img width="4530" height="2100" alt="as_is_canutomotorsVendaVeiculos" src="https://github.com/user-attachments/assets/f80aa81b-cbcc-4751-bb93-1fa6d5bb6f5f" />
 <img width="4524" height="1080" alt="as_is_canutomotrsRegistroVeiculos" src="https://github.com/user-attachments/assets/9c465492-d6ad-454f-98a9-e16c70a013c1" />
+
+---
 
 #### **3.2. Análise dos processos**
 
@@ -36,6 +36,11 @@ As principais melhorias incluem:
 * **Automação do Fluxo de Vendas**: O processo de venda será mais dinâmico. O sistema permitirá a **simulação de financiamento**, a **geração automática de propostas** e a **geração de um link de pagamento**, acelerando o fechamento das negociações. O cliente poderá interagir com a plataforma para agendar visitas e test drives.
 
 * **Melhoria na Experiência do Cliente**: Com um fluxo mais transparente, o cliente terá acesso a informações claras sobre o veículo e o financiamento, e a comunicação será centralizada, proporcionando um serviço mais ágil e profissional.
+
+<img width="7770" height="2400" alt="to_be_canutomotors_Negociação-Venda_Veiculos" src="https://github.com/user-attachments/assets/3e4169e4-fdd4-4588-a2d0-0fca1848b7f8" />
+<img width="4314" height="1740" alt="to_be_canutomotrs_Registro-Anúncio_Veiculos" src="https://github.com/user-attachments/assets/8168a120-f67f-447c-bc65-226410240f2f" />
+
+---
 
 **Limites da Solução:**
 
