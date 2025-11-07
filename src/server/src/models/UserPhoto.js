@@ -1,16 +1,14 @@
-import { DataTypes, Model } from 'sequelize';
-import sequelize from '../config/database.js'; 
+import { DataTypes } from 'sequelize';
+import sequelize from '../config/database.js';
 
-class UserPhoto extends Model {}
-
-UserPhoto.init({
+const UserPhoto = sequelize.define('UserPhoto', {
   id: {
-    type: DataTypes.UUID,
-    defaultValue: DataTypes.UUIDV4,
-    primaryKey: true
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
   },
   user_id: {
-    type: DataTypes.UUID,
+    type: DataTypes.INTEGER,
     allowNull: true
   },
   filename: {
@@ -26,11 +24,11 @@ UserPhoto.init({
     allowNull: true
   },
   type: {
-    type: DataTypes.ENUM('profile', 'doc', 'car', 'other'),
+    type: DataTypes.ENUM('profile','doc','car','other'),
     defaultValue: 'other'
   },
   data: {
-    type: DataTypes.BLOB('long'),
+    type: DataTypes.BLOB('long'), 
     allowNull: false
   },
   metadata: {
@@ -38,8 +36,6 @@ UserPhoto.init({
     allowNull: true
   }
 }, {
-  sequelize,
-  modelName: 'UserPhoto',
   tableName: 'user_photos',
   timestamps: true,
   createdAt: 'created_at',

@@ -11,7 +11,6 @@ router.get("/users/:id/avatar", async (req, res) => {
     if (!user || !user.avatarData) return res.status(404).json({ message: "Imagem não encontrada" });
 
     res.setHeader("Content-Type", user.avatarMime || "application/octet-stream");
-    // avatarData is a Buffer-like (node will handle sending)
     return res.send(user.avatarData);
   } catch (err) {
     console.error("get avatar error:", err);

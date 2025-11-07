@@ -9,9 +9,9 @@ const User = sequelize.define("User", {
   role: { type: DataTypes.ENUM("client","concessionaria","admin"), allowNull:false, defaultValue: "client" },
 
    // Avatar stored in DB (BYTEA)
-  avatarData: { type: DataTypes.BLOB("long"), allowNull: true }, // stores binary
+  avatarData: { type: DataTypes.BLOB("long"), allowNull: true }, 
   avatarMime: { type: DataTypes.STRING, allowNull: true },
-  avatarSize: { type: DataTypes.INTEGER, allowNull: true }, // bytes
+  avatarSize: { type: DataTypes.INTEGER, allowNull: true }, 
 }, {
   tableName: "users",
   timestamps: true,

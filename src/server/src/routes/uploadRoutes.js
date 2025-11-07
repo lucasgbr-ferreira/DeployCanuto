@@ -4,11 +4,10 @@ import User from "../models/User.js";
 
 const router = Router();
 
-// memory storage (keeps file in memory as Buffer)
 const storage = multer.memoryStorage();
 const upload = multer({
   storage,
-  limits: { fileSize: 2 * 1024 * 1024 }, // 2 MB max for avatar
+  limits: { fileSize: 2 * 1024 * 1024 }, 
   fileFilter: (req, file, cb) => {
     if (/^image\/(jpeg|png|jpg|webp)$/.test(file.mimetype)) cb(null, true);
     else cb(new Error("Tipo de arquivo não suportado. Use jpeg/png/webp."), false);

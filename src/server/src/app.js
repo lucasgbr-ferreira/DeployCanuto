@@ -1,46 +1,52 @@
-import express from "express";
-import cors from "cors";
-import dotenv from "dotenv";
-import sequelize from "./config/database.js";
+import 'dotenv/config'; 
 
-import authRoutes from "./routes/authRoutes.js";
-import uploadRoutes from "./routes/uploadRoutes.js";
-import imageGetRoutes from "./routes/imageGetRoutes.js";
-import User from "./models/User.js"; // garante o carregamento do model
+import express from 'express';  
+import cors from 'cors';
 
-// Carrega .env a partir do diretório de execução
-dotenv.config();
+import sequelize from './config/database.js';
+
+import './models/index.js'; 
+
+import authRoutes from './routes/authRoutes.js';
+import uploadRoutes from './routes/uploadRoutes.js';
+import imageGetRoutes from './routes/imageGetRoutes.js';
+import concessionariaRoutes from './routes/concessionariaRoutes.js';
+import clientRoutes from './routes/clientRoutes.js';
 
 const app = express();
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '6mb' }));
+app.use(express.urlencoded({ extended: true }));
 
-// rotas
-app.use("/api/auth", authRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/media', imageGetRoutes); 
+app.use('/api/concessionarias', concessionariaRoutes); 
 
-// rotas de upload / media (avatars)
-app.use("/api/uploads", uploadRoutes);
-app.use("/api/media", imageGetRoutes);
 
-// rota raiz
-app.get("/", (req, res) => res.send("GesCar API running"));
+app.use('/api/uploads', uploadRoutes); 
+app.use('/api/clients', clientRoutes); 
 
-// start
+app.get('/', (req, res) => res.send('GesCar API running'));
+
 const PORT = process.env.PORT || 3000;
 
 const start = async () => {
   try {
     await sequelize.authenticate();
-    console.log("✅ DB connection ok");
-    // atualiza o schema (dev only). Em produção, use migrations.
-    await sequelize.sync({ alter: true });
-    console.log("✅ Models synced");
-    app.listen(PORT, () => console.log(`🚀 Server listening on ${PORT}`));
+    console.log('✅ DB connection ok');
+    if (process.env.NODE_ENV !== 'production') {
+      await sequelize.sync({ alter: true });
+      console.log('✅ Models synced (sync alter enabled)');
+    } else {
+      console.log('ℹ️ Production mode: skipping sequelize.sync, use migrations');
+    }
+
+    app.listen(PORT, () => console.log(`Server listening on http://localhost:${PORT}`));
   } catch (err) {
-    console.error("❌ Unable to start server:", err);
+    console.error('❌ Unable to start server:', err);
     process.exit(1);
   }
 };
-
 start();
+
 
