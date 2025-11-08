@@ -1,23 +1,27 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 import { 
   CarFront, 
-  Gauge, 
-  Cog, 
-  Fuel, 
-  BatteryCharging,
+  Calendar,
+  Tag,
+  MapPin,
+  Fuel,
+  Cog,
+  Gauge,
   Users,
   Heart,
   LogOut,
   Menu,
-  X
+  X,
+  Car
 } from 'lucide-react';
 
 import "../styles/landing.css";
 import "../styles/catalog.css";
 
-// --- Variantes de Animação (do seu App.jsx) ---
+// --- Variantes de Animação ---
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
   visible: (delay = 0) => ({
@@ -34,15 +38,6 @@ const staggerContainer = {
     transition: { staggerChildren: 0.12 }
   }
 };
-
-// --- Dados Mockados (para o catálogo) ---
-const vehiclesData = [
-    { id: 1, name: 'SUV Compacto 2024', desc: 'Automático, Flex, 4 Portas.', imgUrl: 'https://placehold.co/600x400/334155/FFF?text=SUV+Moderno', specs: [{ icon: Gauge, label: '0km' }, { icon: Cog, label: 'Auto' }, { icon: Fuel, label: 'Flex' }], price: '139.990' },
-    { id: 2, name: 'Sedan Premium 2023', desc: 'Seminovo, 15.000km, Teto Solar.', imgUrl: 'https://placehold.co/600x400/475569/FFF?text=Sedan+Executivo', specs: [{ icon: Gauge, label: '15k km' }, { icon: Cog, label: 'Auto' }, { icon: Fuel, label: 'Gasolina' }], price: '185.000' },
-    { id: 3, name: 'Hatchback Turbo 2024', desc: '0km, Manual, Edição Esportiva.', imgUrl: 'https://placehold.co/600x400/1E293B/FFF?text=Hatch+Esportivo', specs: [{ icon: Gauge, label: '0km' }, { icon: Cog, label: 'Manual' }, { icon: Fuel, label: 'Gasolina' }], price: '112.500' },
-    { id: 4, name: 'Pickup 4x4 Diesel', desc: 'Seminovo, 45.000km, 2022.', imgUrl: 'https://placehold.co/600x400/334155/FFF?text=Pickup+Robusta', specs: [{ icon: Gauge, label: '45k km' }, { icon: Cog, label: 'Auto' }, { icon: Fuel, label: 'Diesel' }], price: '210.000' },
-];
-
 
 // --- Sub-Componentes (Dropdown e Modal) ---
 function ProfileDropdown() {
@@ -133,17 +128,46 @@ function LoginModal({ isOpen, onClose }) {
   );
 }
 
-
 // --- Componente Principal (O Catálogo) ---
 export default function CatalogoVeiculos() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [veiculos, setVeiculos] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Buscar veículos do banco de dados
+  useEffect(() => {
+    const fetchVeiculos = async () => {
+      try {
+        setIsLoading(true);
+        const response = await axios.get('http://localhost:3000/api/veiculos');
+        setVeiculos(response.data);
+      } catch (err) {
+        console.error("Erro ao buscar veículos:", err);
+        setError("Não foi possível carregar os veículos. Tente novamente mais tarde.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchVeiculos();
+  }, []);
 
   const navLinks = [
     { name: 'Início', href: '/' },
     { name: 'Veículos', href: '/catalog' },
     { name: 'Promoções', href: '/promocoes' },
   ];
+
+  // Função para formatar preço
+  const formatPrice = (price) => {
+    if (!price) return 'R$ 0,00';
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    }).format(price);
+  };
 
   return (
     <main className="lp-root">
@@ -208,7 +232,10 @@ export default function CatalogoVeiculos() {
             Catálogo de veículos
           </motion.h1>
           <motion.p variants={fadeUp} custom={0.1}>
-            Descubra os melhores carros disponíveis
+            {veiculos.length > 0 
+              ? `${veiculos.length} veículos disponíveis em nosso estoque` 
+              : 'Descubra os melhores carros disponíveis'
+            }
           </motion.p>
         </div>
       </motion.header>
@@ -227,24 +254,51 @@ export default function CatalogoVeiculos() {
             Encontre seu próximo veículo
           </motion.h2>
           <motion.p variants={fadeUp} custom={0.2}>
-            Navegue por uma seleção completa de carros novos e seminovos
+            Navegue por uma seleção completa de carros cadastrados em nosso sistema
           </motion.p>
         </div>
       </motion.section>
 
       {/* 4. Seção Grid */}
       <main className="lp-container" style={{ paddingBottom: '72px', paddingTop: '36px' }}>
-        <motion.div 
-          className="catalog-grid"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.1 }}
-          variants={staggerContainer}
-        >
-          {vehiclesData.map(vehicle => (
-            <VehicleCard key={vehicle.id} vehicle={vehicle} />
-          ))}
-        </motion.div>
+        {isLoading ? (
+          <div className="catalog-loading">
+            <div className="loading-spinner"></div>
+            <p>Carregando veículos...</p>
+          </div>
+        ) : error ? (
+          <div className="catalog-error">
+            <p>{error}</p>
+            <button onClick={() => window.location.reload()} className="btn primary" style={{ marginTop: '16px' }}>
+              Tentar Novamente
+            </button>
+          </div>
+        ) : veiculos.length === 0 ? (
+          <div className="catalog-empty">
+            <div className="catalog-empty-icon">🚗</div>
+            <h3>Nenhum veículo cadastrado</h3>
+            <p>Volte mais tarde para ver nossos veículos disponíveis.</p>
+            <Link to="/dashboard/estoque" className="btn primary" style={{ marginTop: '16px' }}>
+              Gerenciar Estoque
+            </Link>
+          </div>
+        ) : (
+          <motion.div 
+            className="catalog-grid"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.1 }}
+            variants={staggerContainer}
+          >
+            {veiculos.map(vehicle => (
+              <VehicleCard 
+                key={vehicle.id} 
+                vehicle={vehicle} 
+                formatPrice={formatPrice}
+              />
+            ))}
+          </motion.div>
+        )}
       </main>
 
       {/* 5. Footer */}
@@ -259,31 +313,59 @@ export default function CatalogoVeiculos() {
   );
 }
 
-// --- Componente do Card (Estilo catalog.css) ---
-function VehicleCard({ vehicle }) {
+// --- Componente do Card ---
+function VehicleCard({ vehicle, formatPrice }) {
   return (
-    <motion.a 
-      href={`/detalhes-veiculo/${vehicle.id}`} 
+    <motion.div 
       className="vehicle-card"
       variants={fadeUp}
+      whileHover={{ y: -5 }}
+      transition={{ duration: 0.2 }}
     >
-      <img src={vehicle.imgUrl} alt={vehicle.name} className="vehicle-card-img" />
-      <div className="vehicle-card-body">
-        <h3>{vehicle.name}</h3>
-        <p>{vehicle.desc}</p>
-        
-        <div className="vehicle-card-specs">
-          {vehicle.specs.map((spec, index) => (
-            <div key={index} className="spec-tag">
-              <spec.icon width={14} height={14} />
-              {spec.label}
-            </div>
-          ))}
+      <div className="vehicle-card-img-container">
+        <img 
+          src={vehicle.imagemUrl || 'https://placehold.co/600x400/334155/FFF?text=Sem+Imagem'} 
+          alt={`${vehicle.marca} ${vehicle.modelo}`} 
+          className="vehicle-card-img" 
+        />
+        <div className="vehicle-card-badge">
+          <Tag size={14} />
+          {vehicle.placa}
         </div>
       </div>
-      <div className="vehicle-card-footer">
-        <span>R$ {vehicle.price}</span>
+      
+      <div className="vehicle-card-body">
+        <h3 className="vehicle-card-title">
+          {vehicle.marca} {vehicle.modelo}
+        </h3>
+        
+        <div className="vehicle-card-info">
+          <div className="info-item">
+            <Calendar size={16} />
+            <span>Ano: <strong>{vehicle.ano}</strong></span>
+          </div>
+          
+          <div className="info-item">
+            <Car size={16} />
+            <span>Modelo: <strong>{vehicle.modelo}</strong></span>
+          </div>
+          
+          <div className="info-item">
+            <MapPin size={16} />
+            <span>Marca: <strong>{vehicle.marca}</strong></span>
+          </div>
+        </div>
       </div>
-    </motion.a>
+      
+      <div className="vehicle-card-footer">
+        <div className="price-section">
+          <span className="price-label">Preço</span>
+          <span className="price-value">{formatPrice(vehicle.preco)}</span>
+        </div>
+        <button className="btn-contact">
+          Entrar em Contato
+        </button>
+      </div>
+    </motion.div>
   );
 }

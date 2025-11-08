@@ -1,7 +1,4 @@
-/* Arquivo: catalog.css
-  Este arquivo define os estilos *específicos* da página de catálogo.
-  Ele depende das variáveis e estilos base definidos em 'landing.css'.
-*/
+/* client/src/styles/catalog.css */
 
 /* 1. Header & Logo Enhancements */
 .lp-header .lp-brand {
@@ -10,6 +7,8 @@
   gap: 8px;
   color: #fff;
   text-decoration: none;
+  font-weight: 800;
+  font-size: 18px;
 }
 .lp-header .lp-brand svg {
   color: var(--accent);
@@ -26,22 +25,27 @@
   align-items: center;
   gap: 4px;
   transition: all 0.2s ease;
+  cursor: pointer;
 }
 .lp-nav .profile-dropdown .nav-link:hover {
   background: var(--glass);
   color: #fff;
 }
 .lp-nav .profile-dropdown .dropdown-arrow {
-  margin-left: 0;
+  margin-left: 4px;
+  transition: transform 0.2s ease;
 }
-
+.lp-nav .profile-dropdown .dropdown-arrow.open {
+  transform: rotate(180deg);
+}
 
 /* 2. Seção Hero (Catálogo) */
 .catalog-hero {
   background-color: var(--bg); 
   border-bottom: 1px solid rgba(255, 255, 255, 0.02);
-  padding: 72px 0;
+  padding: 96px 0;
   text-align: center;
+  position: relative;
 }
 .catalog-hero h1 {
   font-size: clamp(28px, 4vw, 44px);
@@ -55,26 +59,31 @@
   color: var(--muted);
   margin: 0;
   font-size: 16px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* 3. Seção Introdução */
 .catalog-intro {
-  padding: 48px 0;
+  padding: 72px 0;
   text-align: center;
   background-color: var(--glass);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.02);
 }
 .catalog-intro h6 {
   color: var(--accent);
   font-size: 14px;
   font-weight: 700;
   text-transform: uppercase;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
+  letter-spacing: 0.5px;
 }
 .catalog-intro h2 {
   font-size: clamp(26px, 3.5vw, 36px);
   font-weight: 800;
   color: #fff;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
   line-height: 1.1;
   letter-spacing: -0.01em;
 }
@@ -83,96 +92,257 @@
   font-size: 16px;
   max-width: 500px;
   margin: 0 auto;
+  line-height: 1.6;
 }
 
-/* 4. Grid de Veículos */
+/* 4. Grid de Veículos - MELHORADO */
 .catalog-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 24px;
+  width: 100%;
+  justify-items: center;
 }
 
-/* 5. Aperfeiçoamentos do Card de Veículo */
+/* Quando há apenas um card, limitamos a largura máxima */
+.catalog-grid:has(.vehicle-card:only-child) {
+  grid-template-columns: minmax(320px, 400px);
+  justify-content: center;
+}
+
+/* 5. Card de Veículo - COMPLETAMENTE REFEITO */
 .vehicle-card {
   display: flex;
   flex-direction: column;
   background-color: var(--card);
-  border-radius: var(--radius);
-  box-shadow: 0 6px 18px rgba(2, 6, 23, 0.45);
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(2, 6, 23, 0.4);
   overflow: hidden;
   text-decoration: none;
   color: inherit;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  width: 100%;
+  max-width: 400px;
+  height: fit-content;
+  position: relative;
 }
+
 .vehicle-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(2, 6, 23, 0.7);
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(2, 6, 23, 0.6);
+  border-color: rgba(255, 90, 95, 0.3);
+}
+
+/* Container da imagem melhorado */
+.vehicle-card-img-container {
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--glass), rgba(255,255,255,0.05));
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
 }
 
 .vehicle-card-img {
   width: 100%;
-  height: 200px;
+  height: 100%;
   object-fit: cover;
-  background-color: #333;
+  object-position: center;
+  transition: transform 0.3s ease;
 }
 
+.vehicle-card:hover .vehicle-card-img {
+  transform: scale(1.05);
+}
+
+/* Badge da placa */
+.vehicle-card-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  letter-spacing: 0.5px;
+  font-family: 'Monaco', 'Consolas', monospace;
+}
+
+/* Corpo do card melhorado */
 .vehicle-card-body {
   padding: 20px;
   flex-grow: 1;
   display: flex;
   flex-direction: column;
+  gap: 16px;
 }
-.vehicle-card-body h3 {
+
+.vehicle-card-title {
   font-size: 20px;
   font-weight: 700;
   color: #fff;
-  margin: 0 0 8px 0;
-}
-.vehicle-card-body p {
-  font-size: 14px;
-  color: var(--muted);
-  margin: 0 0 20px 0;
-  line-height: 1.5;
+  margin: 0;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.vehicle-card-specs {
+/* Informações do veículo */
+.vehicle-card-info {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: auto;
+  flex-direction: column;
+  gap: 12px;
 }
-.spec-tag {
-  background-color: var(--glass);
-  color: var(--muted);
-  padding: 6px 10px;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 500;
+
+.info-item {
   display: flex;
   align-items: center;
-  gap: 6px;
-}
-.spec-tag svg {
-  color: var(--accent);
+  gap: 10px;
+  color: var(--muted);
+  font-size: 14px;
 }
 
+.info-item svg {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.info-item strong {
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Footer do card melhorado */
 .vehicle-card-footer {
   padding: 20px;
-  background-color: var(--glass);
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  text-align: right;
+  background: var(--glass);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
 }
-.vehicle-card-footer span {
-  font-size: 22px;
-  font-weight: 700;
+
+.price-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.price-label {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.price-value {
+  font-size: 20px;
+  font-weight: 800;
   color: var(--accent);
+  letter-spacing: -0.5px;
 }
 
+.btn-contact {
+  background: linear-gradient(90deg, var(--accent), #ff7b7f);
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
 
-/* 6. Estilos de Modal e Dropdown */
-.profile-dropdown { position: relative; }
-.dropdown-arrow { width: 16px; height: 16px; margin-left: 4px; transition: transform 0.2s; }
-.dropdown-arrow.open { transform: rotate(180deg); }
+.btn-contact:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(255, 90, 95, 0.4);
+}
+
+/* 6. Estados de loading e empty states */
+.catalog-loading {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 80px 20px;
+  color: var(--muted);
+  gap: 16px;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--glass);
+  border-top: 3px solid var(--accent);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.catalog-error {
+  text-align: center;
+  padding: 60px 20px;
+  color: #f87171;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 12px;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.catalog-empty {
+  text-align: center;
+  padding: 80px 20px;
+  color: var(--muted);
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.catalog-empty-icon {
+  font-size: 64px;
+  margin-bottom: 20px;
+  opacity: 0.5;
+}
+
+.catalog-empty h3 {
+  color: #fff;
+  margin-bottom: 12px;
+  font-size: 20px;
+}
+
+.catalog-empty p {
+  color: var(--muted);
+  font-size: 16px;
+  margin: 0 auto 20px;
+}
+
+/* 7. Estilos de Modal e Dropdown */
+.profile-dropdown { 
+  position: relative; 
+  display: inline-block;
+}
+
 .dropdown-menu {
   position: absolute;
   top: 100%;
@@ -185,7 +355,9 @@
   width: 200px;
   z-index: 50;
   border: 1px solid rgba(255,255,255,0.05);
+  backdrop-filter: blur(10px);
 }
+
 .dropdown-item {
   display: flex;
   align-items: center;
@@ -195,19 +367,83 @@
   text-decoration: none;
   font-size: 14px;
   border-radius: 6px;
+  transition: all 0.2s ease;
 }
-.dropdown-item:hover { background-color: var(--glass); color: #fff; }
-.dropdown-menu hr { border: 0; border-top: 1px solid rgba(255,255,255,0.05); margin: 8px 0; }
+.dropdown-item:hover { 
+  background-color: var(--glass); 
+  color: #fff; 
+}
+.dropdown-menu hr { 
+  border: 0; 
+  border-top: 1px solid rgba(255,255,255,0.05); 
+  margin: 8px 0; 
+}
 
-.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 99; display: flex; align-items: center; justify-content: center; }
-.modal-content { background: var(--card); border-radius: var(--radius); box-shadow: 0 10px 40px rgba(0,0,0,0.4); max-width: 400px; width: 100%; border: 1px solid rgba(255,255,255,0.05); }
-.modal-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
-.modal-header h3 { margin: 0; font-size: 18px; }
-.modal-close-btn { background: none; border: none; color: var(--muted); cursor: pointer; }
-.modal-body { padding: 20px; }
-.modal-footer { padding: 20px; background: var(--glass); border-top: 1px solid rgba(255,255,255,0.05); border-radius: 0 0 var(--radius) var(--radius); }
-.form-group { margin-bottom: 16px; }
-.form-group label { display: block; font-size: 14px; color: var(--muted); margin-bottom: 6px; }
+.modal-overlay { 
+  position: fixed; 
+  inset: 0; 
+  background: rgba(0,0,0,0.6); 
+  backdrop-filter: blur(5px); 
+  z-index: 99; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  padding: 20px;
+}
+.modal-content { 
+  background: var(--card); 
+  border-radius: var(--radius); 
+  box-shadow: 0 10px 40px rgba(0,0,0,0.4); 
+  max-width: 400px; 
+  width: 100%; 
+  border: 1px solid rgba(255,255,255,0.05);
+  overflow: hidden;
+}
+.modal-header { 
+  padding: 20px; 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  border-bottom: 1px solid rgba(255,255,255,0.05); 
+}
+.modal-header h3 { 
+  margin: 0; 
+  font-size: 18px; 
+  font-weight: 700;
+  color: #fff;
+}
+.modal-close-btn { 
+  background: none; 
+  border: none; 
+  color: var(--muted); 
+  cursor: pointer; 
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+.modal-close-btn:hover {
+  background: rgba(255,255,255,0.05);
+  color: #fff;
+}
+.modal-body { 
+  padding: 20px; 
+}
+.modal-footer { 
+  padding: 20px; 
+  background: var(--glass); 
+  border-top: 1px solid rgba(255,255,255,0.05); 
+  border-radius: 0 0 var(--radius) var(--radius); 
+}
+.form-group { 
+  margin-bottom: 16px; 
+}
+.form-group label { 
+  display: block; 
+  font-size: 14px; 
+  color: var(--muted); 
+  margin-bottom: 6px; 
+  font-weight: 600;
+}
 .form-group input {
   width: 100%;
   padding: 12px 14px;
@@ -216,36 +452,114 @@
   border-radius: 8px;
   color: #fff;
   font-size: 16px;
+  transition: all 0.2s ease;
+}
+.form-group input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(255, 90, 95, 0.2);
 }
 
-/* 7. Menu Mobile */
+/* 8. Menu Mobile */
 .mobile-menu-btn {
   display: none;
   cursor: pointer;
   z-index: 100;
+  background: none;
+  border: none;
+  color: var(--muted);
+  padding: 8px;
 }
 .mobile-menu-dropdown {
   display: none;
+  flex-direction: column;
+  background: var(--card);
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  backdrop-filter: blur(10px);
+}
+.mobile-menu-dropdown .nav-link {
+  padding: 16px 24px;
+  border-bottom: 1px solid rgba(255,255,255,0.02);
+  text-decoration: none;
+  color: var(--muted);
+  transition: all 0.2s ease;
+}
+.mobile-menu-dropdown .nav-link:hover {
+  background: var(--glass);
+  color: #fff;
+}
+.mobile-menu-dropdown .profile-dropdown {
+  padding: 16px 24px;
 }
 
-@media (max-width:980px){
-  .lp-nav { display: none; }
-  .mobile-menu-btn { display: block; }
+/* 9. Responsividade */
+@media (max-width: 980px){
+  .lp-nav { 
+    display: none; 
+  }
+  .mobile-menu-btn { 
+    display: block; 
+  }
   .mobile-menu-dropdown {
     display: flex;
+  }
+  
+  .catalog-hero {
+    padding: 72px 0;
+  }
+  
+  .catalog-intro {
+    padding: 48px 0;
+  }
+  
+  .catalog-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  
+  .vehicle-card-footer {
     flex-direction: column;
-    background: var(--card);
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+    align-items: stretch;
+    gap: 12px;
   }
-  .mobile-menu-dropdown .nav-link {
-    padding: 16px 24px;
-    border-bottom: 1px solid rgba(255,255,255,0.02);
+  
+  .btn-contact {
+    width: 100%;
   }
-  .mobile-menu-dropdown .profile-dropdown {
-    padding: 16px 24px;
+}
+
+@media (max-width: 480px) {
+  .catalog-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
   }
+  
+  .vehicle-card-body {
+    padding: 16px;
+  }
+  
+  .vehicle-card-footer {
+    padding: 16px;
+  }
+  
+  .vehicle-card-img-container {
+    height: 200px;
+  }
+}
+
+/* 10. Estados de foco para acessibilidade */
+.btn-contact:focus,
+.modal-close-btn:focus,
+.mobile-menu-btn:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.vehicle-card:focus-within {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
 }
