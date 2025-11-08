@@ -464,13 +464,13 @@ html, body {
 
   
   html, body {
-    overflow-x: hidden !important;
-    max-width: 100vw !important;
+    overflow-x: hidden;
+    max-width: 100vw;
   }
 
   .home-wrapper {
-    width: 100vw !important;
-    overflow-x: hidden !important;
+    width: 100vw ;
+    overflow-x: hidden;
   }
 
  
@@ -478,7 +478,7 @@ html, body {
   .header-cliente {
     padding: 14px 16px;
     flex-wrap: wrap;
-    justify-content: center !important;
+    justify-content: center;
     text-align: center;
   }
 
@@ -565,7 +565,7 @@ html, body {
 
 
   .benefit-card {
-    flex-direction: column !important;
+    flex-direction: column;
     width: 100%;
   }
 
@@ -633,7 +633,7 @@ html, body {
 }
 
 .home-wrapper {
-  background-color: #f3f3f3 !important;
+  background-color: #f3f3f3;
   min-height: 100vh;
   width: 100%;
   z-index: 10;
