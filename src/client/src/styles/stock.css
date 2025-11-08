@@ -1,15 +1,11 @@
-/* Arquivo: stock.css
-  Este arquivo define os estilos *específicos* da página de Dashboard.
-  Ele depende das variáveis e estilos base definidos em 'landing.css'.
-*/
+/* client/src/styles/stock.css */
 
-/* 1. Seção Hero */
+/* 1. Seção Hero (Cabeçalho do Dashboard) */
 .dash-hero {
   padding: 96px 0;
   position: relative;
   text-align: center;
   background-color: var(--card); 
-
   background-image: linear-gradient(rgba(7, 20, 40, 0.8), rgba(7, 20, 40, 0.8)),
     url('https://placehold.co/1920x600/334155/FFF?text=Estoque');
   background-size: cover;
@@ -50,7 +46,7 @@
   gap: 24px;
 }
 
-/* 3. Card de Ação (Veículos disponíveis, vendidos, etc.) */
+/* 3. Card de Ação (Veículos disponíveis, etc.) */
 .dash-card {
   display: block; 
   background: var(--card);
@@ -61,6 +57,7 @@
   color: inherit;
   transition: transform 0.3s ease, box-shadow 0.3s ease,
     background-color 0.3s ease;
+  cursor: pointer;
 }
 
 .dash-card:hover {
@@ -105,6 +102,7 @@
   gap: 4px;
 }
 
+/* 4. Seção do Formulário de Cadastro */
 .dash-add-form {
   padding: 48px 24px;
   margin-top: 72px;
@@ -130,31 +128,677 @@
   margin: 0 auto 24px auto;
 }
 
-.form-row {
+/* 5. Estilos do Formulário Real */
+.dash-real-form {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: 12px;
-  margin-top: 24px;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 800px;
+  margin: 32px auto 0 auto;
 }
 
-.fake-select {
-  padding: 12px 16px;
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
-  color: var(--muted);
-  min-width: 250px;
+.form-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap; 
+  gap: 16px;
+}
+
+.form-group {
+  flex: 1; 
+  min-width: 150px; 
   text-align: left;
+}
+
+.form-group.small {
+  flex-grow: 1;
+}
+.form-group.medium {
+  flex-grow: 2;
+}
+.form-group.large {
+  flex-grow: 3;
+  min-width: 200px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px 14px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--glass);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.2);
+}
+
+.dash-real-form .btn {
+  margin-top: 16px;
+  align-self: flex-start;
+}
+
+/* 6. Estilos do Modal (Fundo e Conteúdo) */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(2, 6, 23, 0.6) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999; 
+}
+
+.modal-content {
+  background: var(--card);
+  padding: 20px;
+  border-radius: var(--radius);
+  border: 1px solid var(--glass);
+  z-index: 1000;
+  max-height: 90vh;
+  overflow-y: auto;
+  width: 90%;
+  max-width: 600px;
+}
+
+.modal-content.large {
+  max-width: 900px;
+}
+
+/* 7. Lista de Veículos - MELHORADO */
+.veiculo-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  width: 100%;
+  max-height: 70vh; 
+  overflow-y: auto; 
+  padding: 4px;
+  justify-items: center;
+}
+
+/* Quando há apenas um card, limitamos a largura máxima */
+.veiculo-list:has(.veiculo-card:only-child) {
+  grid-template-columns: minmax(280px, 400px);
+  justify-content: center;
+}
+
+/* 8. Estilos do Card de Veículo (Dentro do Modal) - MELHORADO */
+.veiculo-card {
+  background: var(--card);
+  border: 1px solid var(--glass);
+  border-radius: var(--radius);
+  overflow: hidden; 
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+  max-width: 400px;
+  height: fit-content;
+}
+
+.veiculo-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(2, 6, 23, 0.5);
+}
+
+.veiculo-card-img-container {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--glass), rgba(255,255,255,0.05));
+  border-bottom: 1px solid var(--glass);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.veiculo-card-img-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.3s ease;
+}
+
+.veiculo-card:hover .veiculo-card-img-container img {
+  transform: scale(1.05);
+}
+
+.veiculo-card-body {
+  padding: 20px;
+  flex-grow: 1; 
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.veiculo-card-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+  line-height: 1.3;
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+}
+
+.veiculo-card-placa {
+  font-family: 'Monaco', 'Consolas', monospace; 
+  font-size: 14px;
+  color: var(--muted);
+  background: var(--glass);
+  padding: 4px 8px;
+  border-radius: 4px;
+  align-self: flex-start; 
+  letter-spacing: 1px;
+}
+
+.veiculo-card-details {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  cursor: pointer;
+  margin-top: auto;
+}
+
+.veiculo-card-ano {
+  font-size: 14px;
+  color: var(--muted);
   font-weight: 600;
+}
+
+.veiculo-card-preco {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--accent);
+  text-align: right;
+}
+
+/* 9. Botão de Excluir - MELHORADO */
+.btn-delete {
+  background: linear-gradient(90deg, #ef4444, #dc2626);
+  color: white;
+}
+
+.btn-delete:hover {
+  background: linear-gradient(90deg, #dc2626, #b91c1c);
+}
+
+/* 10. Estilos para o Modal Header e Footer - MELHORADO */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--glass);
+  position: sticky;
+  top: 0;
+  background: var(--card);
+  z-index: 10;
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: #fff;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.modal-close-btn {
+  background: var(--glass);
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-close-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  color: #fff;
+}
+
+.modal-body {
+  padding: 0;
+}
+
+.modal-footer {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--glass);
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+/* 11. Estilos para estados de loading e erro */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 40px;
+  color: var(--muted);
+  gap: 16px;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--glass);
+  border-top: 3px solid var(--accent);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-state {
+  color: #f87171;
+  text-align: center;
+  padding: 40px 20px;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 8px;
+  margin: 20px 0;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--muted);
+}
+
+.empty-state-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+/* 12. Responsividade para mobile - MELHORADO */
+@media (max-width: 768px) {
+  .dash-hero {
+    padding: 72px 0;
+  }
+  
+  .dash-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .dash-add-form {
+    padding: 32px 16px;
+    margin-top: 48px;
+  }
+  
+  .form-row {
+    flex-direction: column;
+  }
+  
+  .form-group {
+    min-width: 100%;
+  }
+  
+  .modal-content.large {
+    max-width: 95%;
+    margin: 10px;
+    padding: 16px;
+  }
+  
+  .veiculo-list {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .veiculo-card {
+    max-width: 100%;
+  }
+  
+  .veiculo-card-img-container {
+    height: 180px;
+  }
+  
+  .veiculo-card-body {
+    padding: 16px;
+  }
+  
+  .veiculo-card-title {
+    font-size: 16px;
+    min-height: auto;
+  }
+  
+  .modal-header {
+    margin-bottom: 20px;
+  }
+  
+  .modal-header h3 {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .veiculo-card-img-container {
+    height: 160px;
+  }
+  
+  .veiculo-card-details {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .veiculo-card-preco {
+    text-align: left;
+  }
+}
+
+/* 13. Animações suaves para transições - MELHORADO */
+.veiculo-card {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 14. Scrollbar personalizada para o modal */
+.veiculo-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.veiculo-list::-webkit-scrollbar-track {
+  background: var(--glass);
+  border-radius: 3px;
+}
+
+.veiculo-list::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 3px;
+}
+
+.veiculo-list::-webkit-scrollbar-thumb:hover {
+  background: #ff7b7f;
+}
+
+/* 15. Estados de foco para acessibilidade */
+.btn-delete:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.form-group input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.modal-close-btn:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* 16. Placeholder para imagens que não carregam */
+.veiculo-card-img-container img:before {
+  content: "🚗";
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--glass);
+  color: var(--muted);
+  font-size: 24px;
+}
+
+/* 17. Efeito de skeleton loading */
+.skeleton {
+  background: linear-gradient(90deg, var(--glass) 25%, rgba(255,255,255,0.1) 50%, var(--glass) 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.skeleton-image {
+  width: 100%;
+  height: 200px;
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+
+.skeleton-text {
+  height: 16px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.skeleton-text.short {
+  width: 60%;
+}
+
+.skeleton-button {
+  height: 40px;
+  border-radius: 6px;
+  margin-top: 16px;
+}
+
+/* 18. Estilos para Modo de Edição */
+.veiculo-card.editing {
+  border: 2px solid var(--accent);
+  box-shadow: 0 0 0 3px rgba(255, 90, 95, 0.1);
+}
+
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.edit-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.edit-field label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.edit-input {
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--glass);
+  border-radius: 6px;
+  color: #fff;
+  font-size: 14px;
   transition: all 0.2s ease;
 }
-.fake-select:hover {
-  border-color: rgba(255, 255, 255, 0.1);
+
+.edit-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(255, 90, 95, 0.2);
+}
+
+.edit-row {
+  display: flex;
+  gap: 12px;
+}
+
+.edit-field.small {
+  flex: 1;
+}
+
+/* 18.5 Base consistente para todos os botões de ação */
+.btn-edit,
+.btn-delete,
+.btn-save,
+.btn-cancel {
+  min-height: 44px;
+  padding: 12px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+}
+
+/* 19. Botões de Ação Melhorados - CORES E HOVER ESPECÍFICOS */
+.veiculo-card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.btn-edit {
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+  color: white;
+}
+
+.btn-edit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+  background: linear-gradient(90deg, #1d4ed8, #1e40af);
+}
+
+.btn-edit:active {
+  transform: translateY(0);
+}
+
+.btn-delete:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+}
+
+.btn-delete:active {
+  transform: translateY(0);
+}
+
+.btn-save {
+  background: linear-gradient(90deg, #10b981, #059669);
+  color: white;
+}
+
+.btn-save:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+  background: linear-gradient(90deg, #059669, #047857);
+}
+
+.btn-save:active {
+  transform: translateY(0);
+}
+
+.btn-cancel {
+  background: var(--glass);
+  color: var(--muted);
+  border: 1px solid var(--glass);
+}
+
+.btn-cancel:hover {
+  background: rgba(255, 255, 255, 0.05);
   color: #fff;
+  transform: translateY(-2px);
+}
+
+.btn-cancel:active {
+  transform: translateY(0);
+}
+
+/* 20. Estados de Foco para Acessibilidade */
+.btn-edit:focus,
+.btn-delete:focus,
+.btn-save:focus,
+.btn-cancel:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.edit-input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+/* 21. Responsividade para Edição */
+@media (max-width: 768px) {
+  .edit-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .veiculo-card-actions {
+    flex-direction: column;
+  }
+  
+  .btn-edit,
+  .btn-delete,
+  .btn-save,
+  .btn-cancel {
+    padding: 12px 16px;
+  }
+}
+
+/* 22. Animações para Transição de Edição */
+.veiculo-card {
+  transition: all 0.3s ease;
+}
+
+.veiculo-card.editing {
+  animation: pulseEdit 0.5s ease-in-out;
+}
+
+@keyframes pulseEdit {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 90, 95, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(255, 90, 95, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 90, 95, 0);
+  }
 }

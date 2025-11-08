@@ -1,7 +1,10 @@
+// client/src/pages/EstoqueVeiculos.jsx
+
+// --- Imports ---
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-// Importando ícones (adicionando os novos)
+import axios from 'axios'; // Importar o Axios
 import { 
   CarFront, 
   Users,
@@ -12,14 +15,16 @@ import {
   Car,
   CheckSquare, 
   Wrench, 
-  ArrowRight, 
-  ChevronDown 
+  ArrowRight,
+  Edit,
+  Save,
+  Trash2
 } from 'lucide-react';
 
 import "../styles/landing.css"; 
 import "../styles/stock.css"; 
 
-// --- Variantes de Animação  ---
+// --- Variantes de Animação ---
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
   visible: (delay = 0) => ({
@@ -38,7 +43,7 @@ const staggerContainer = {
 };
 
 
-// --- Sub-Componentes Reutilizados (Dropdown e Modal) ---
+// --- Sub-Componentes (Dropdown e Modal de Login - Sem alterações) ---
 function ProfileDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -128,10 +133,166 @@ function LoginModal({ isOpen, onClose }) {
 }
 
 
-// --- Componente Principal (O Dashboard) ---
+// --- Componente Principal (Dashboard) ---
 export default function EstoqueVeiculos() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // --- LÓGICA DO FORMULÁRIO (MODIFICADO) ---
+  const [formData, setFormData] = useState({
+    placa: '',
+    modelo: '',
+    marca: '',
+    ano: '',
+    preco: '',
+    imagemUrl: ''
+  });
+
+  // --- LÓGICA DO MODAL DE VEÍCULOS (NOVO) ---
+  const [isVeiculoModalOpen, setIsVeiculoModalOpen] = useState(false);
+  const [veiculos, setVeiculos] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // --- ESTADOS PARA EDIÇÃO (NOVO) ---
+  const [veiculoEditando, setVeiculoEditando] = useState(null);
+  const [isEditMode, setIsEditMode] = useState(false);
+
+  // --- Função para buscar veículos (NOVO) ---
+  const fetchVeiculos = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await axios.get('http://localhost:3000/api/veiculos');
+      setVeiculos(response.data);
+    } catch (err) {
+      console.error("Erro ao buscar veículos:", err);
+      setError("Não foi possível carregar os veículos.");
+      setVeiculos([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // --- Handlers do Modal de Veículos (NOVO) ---
+  const handleOpenVeiculoModal = () => {
+    setIsVeiculoModalOpen(true);
+    fetchVeiculos(); // Busca os dados ao abrir o modal
+  };
+
+  const handleCloseVeiculoModal = () => {
+    setIsVeiculoModalOpen(false);
+    setIsEditMode(false);
+    setVeiculoEditando(null);
+  };
+
+  // --- Função para excluir veículo (NOVA) ---
+  const handleDeleteVeiculo = async (veiculoId) => {
+    if (!window.confirm('Tem certeza que deseja excluir este veículo?')) {
+      return;
+    }
+
+    try {
+      await axios.delete(`http://localhost:3000/api/veiculos/${veiculoId}`);
+      
+      // Atualiza a lista de veículos após exclusão
+      setVeiculos(prevVeiculos => 
+        prevVeiculos.filter(veiculo => veiculo.id !== veiculoId)
+      );
+      
+      alert('Veículo excluído com sucesso!');
+    } catch (error) {
+      console.error('Erro ao excluir veículo:', error);
+      alert('Erro ao excluir veículo. Tente novamente.');
+    }
+  };
+
+  // --- Função para editar veículo (NOVA) ---
+  const handleEditVeiculo = (veiculo) => {
+    setVeiculoEditando({...veiculo});
+    setIsEditMode(true);
+  };
+
+  // --- Função para salvar edição (NOVA) ---
+  const handleSaveEdit = async () => {
+    if (!veiculoEditando) return;
+
+    try {
+      const response = await axios.put(
+        `http://localhost:3000/api/veiculos/${veiculoEditando.id}`,
+        veiculoEditando
+      );
+      
+      // Atualiza a lista de veículos com os dados editados
+      setVeiculos(prevVeiculos => 
+        prevVeiculos.map(veiculo => 
+          veiculo.id === veiculoEditando.id ? response.data : veiculo
+        )
+      );
+      
+      setIsEditMode(false);
+      setVeiculoEditando(null);
+      alert('Veículo atualizado com sucesso!');
+    } catch (error) {
+      console.error('Erro ao atualizar veículo:', error);
+      alert('Erro ao atualizar veículo. Tente novamente.');
+    }
+  };
+
+  // --- Função para cancelar edição (NOVA) ---
+  const handleCancelEdit = () => {
+    setIsEditMode(false);
+    setVeiculoEditando(null);
+  };
+
+  // --- Função para atualizar campo em edição (NOVA) ---
+  const handleEditFieldChange = (field, value) => {
+    setVeiculoEditando(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+  
+  // --- FIM LÓGICA DO MODAL ---
+
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault(); 
+    const endpoint = 'http://localhost:3000/api/veiculos';
+
+    try {
+      const response = await axios.post(
+        endpoint,
+        formData 
+      );
+      
+      console.log('Veículo cadastrado:', response.data);
+      alert('Veículo cadastrado com sucesso!');
+      
+      // Limpa o formulário (MODIFICADO)
+      setFormData({ 
+        placa: '', 
+        modelo: '', 
+        marca: '', 
+        ano: '', 
+        preco: '', 
+        imagemUrl: ''
+      });
+
+    } catch (error) {
+      const errorMessage = error.response ? error.response.data.message : error.message;
+      console.error('Erro ao cadastrar:', errorMessage);
+      alert(`Erro ao cadastrar veículo: ${errorMessage}`);
+    }
+  };
 
   const navLinks = [
     { name: 'Início', href: '/' }, 
@@ -142,7 +303,7 @@ export default function EstoqueVeiculos() {
   return (
     <main className="lp-root">
       
-      {/* 1. Navbar (Menu Superior) */}
+      {/* 1. Navbar (Sem alterações) */}
       <nav className="lp-header">
         <div className="lp-container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Link to="/" className="lp-brand">
@@ -186,7 +347,7 @@ export default function EstoqueVeiculos() {
         </AnimatePresence>
       </nav>
 
-      {/* 2. Seção Hero (Dashboard) */}
+      {/* 2. Seção Hero (Dashboard) (Sem alterações) */}
       <motion.header 
         className="dash-hero"
         initial="hidden"
@@ -199,16 +360,16 @@ export default function EstoqueVeiculos() {
             Estoque de veículos da concessionária
           </motion.h1>
           <motion.p variants={fadeUp} custom={0.1}>
-            Gerencie com precisão todos os veículos disponíveis em seu estoque. Acompanhe cada detalhe e mantenha o controle total de suas vendas.
+            Gerencie com precisão todos os veículos disponíveis em seu estoque.
           </motion.p>
           <motion.div className="dash-hero-cta" variants={fadeUp} custom={0.2}>
-            <button className="btn primary">Adicionar Veículo</button>
+            <a href="#add-veiculo" className="btn primary">Adicionar Veículo</a>
             <button className="btn ghost">Filtrar Estoque</button>
           </motion.div>
         </div>
       </motion.header>
 
-      {/* 3. Seção Introdução (Reutilizada do catalog.css) */}
+      {/* 3. Seção Introdução (Sem alterações) */}
       <motion.section 
         className="catalog-intro"
         initial="hidden"
@@ -227,7 +388,7 @@ export default function EstoqueVeiculos() {
         </div>
       </motion.section>
 
-      {/* 4. Seção Grid de Ações */}
+      {/* 4. Seção Grid de Ações (MODIFICADO) */}
       <main className="lp-container" style={{ paddingBottom: '72px', paddingTop: '36px' }}>
         <motion.div 
           className="dash-grid"
@@ -236,18 +397,20 @@ export default function EstoqueVeiculos() {
           viewport={{ once: true, amount: 0.1 }}
           variants={staggerContainer}
         >
-          {/* Cards do Dashboard */}
+          {/* --- MODIFICADO: Adicionado onClick --- */}
           <DashboardCard
             icon={Car}
             title="Veículos disponíveis para venda"
             desc="Confira os detalhes de cada veículo do estoque."
             linkText="Detalhes"
+            onClick={handleOpenVeiculoModal} 
           />
           <DashboardCard
             icon={CheckSquare}
             title="Veículos vendidos"
             desc="Histórico de vendas concluídas."
             linkText="Relatório"
+            // onClick={() => alert("Função 'Vendidos' em breve!")} // Exemplo de como usar em outros
           />
           <DashboardCard
             icon={Wrench}
@@ -257,8 +420,9 @@ export default function EstoqueVeiculos() {
           />
         </motion.div>
 
-        {/* 5. Seção Adicionar Veículo */}
+        {/* 5. Seção Adicionar Veículo (MODIFICADO) */}
         <motion.section 
+          id="add-veiculo" 
           className="dash-add-form"
           initial="hidden"
           whileInView="visible"
@@ -267,43 +431,99 @@ export default function EstoqueVeiculos() {
         >
             <h2>Adicionar novo veículo</h2>
             <p>
-              Insira todas as informações necessárias para cadastrar um novo veículo em seu estoque.
+              Insira todas as informações necessárias para cadastrar um novo veículo.
             </p>
-            <div className="form-row">
-              {/* Botão customizado que imita um <select> */}
-              <button className="fake-select">
-                <span>Selecione o veículo</span>
-                <ChevronDown size={20} />
+            
+            <form onSubmit={handleSubmit} className="dash-real-form">
+              
+              <div className="form-row">
+                <div className="form-group small">
+                  <label htmlFor="placa">Placa</label>
+                  <input type="text" id="placa" name="placa" value={formData.placa} onChange={handleChange} required />
+                </div>
+                <div className="form-group medium">
+                  <label htmlFor="marca">Marca</label>
+                  <input type="text" id="marca" name="marca" value={formData.marca} onChange={handleChange} required />
+                </div>
+                <div className="form-group large">
+                  <label htmlFor="modelo">Modelo</label>
+                  <input type="text" id="modelo" name="modelo" value={formData.modelo} onChange={handleChange} required />
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group small">
+                  <label htmlFor="ano">Ano</label>
+                  <input type="number" id="ano" name="ano" value={formData.ano} onChange={handleChange} placeholder="ex: 2024" required />
+                </div>
+                <div className="form-group medium">
+                  <label htmlFor="preco">Preço (R$)</label>
+                  <input type="number" step="0.01" id="preco" name="preco" value={formData.preco} onChange={handleChange} placeholder="ex: 75000.00" required />
+                </div>
+              </div>
+              
+              {/* --- NOVO FORM ROW PARA IMAGEM --- */}
+              <div className="form-row">
+                 <div className="form-group large" style={{flexGrow: 10}}> {/* Ocupa a linha inteira */}
+                  <label htmlFor="imagemUrl">URL da Imagem</label>
+                  <input 
+                    type="text" 
+                    id="imagemUrl" 
+                    name="imagemUrl" 
+                    value={formData.imagemUrl} 
+                    onChange={handleChange} 
+                    placeholder="https://exemplo.com/foto-do-carro.png" 
+                  />
+                </div>
+              </div>
+              
+              <button type="submit" className="btn primary">
+                Cadastrar Veículo no Estoque
               </button>
-              <button className="btn primary">
-                Cadastrar
-              </button>
-            </div>
-            <small style={{ color: 'var(--muted)', marginTop: '16px', display: 'block', fontSize: '12px' }}>
-              Ao cadastrar, você confirma que todas as informações são verdadeiras e precisas.
-            </small>
+            </form>
+            
         </motion.section>
       </main>
 
-
-      {/* 6. Footer (Reutilizado 100%) */}
+      {/* 6. Footer (Sem alterações) */}
       <footer className="lp-footer">
         <div className="lp-container">
           <small>© {new Date().getFullYear()} CanutoMotors — Todos os direitos reservados.</small>
         </div>
       </footer>
 
+      {/* Modais */}
       <LoginModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      
+      {/* --- NOVO MODAL DE LISTA DE VEÍCULOS --- */}
+      <VeiculoListModal 
+        isOpen={isVeiculoModalOpen}
+        onClose={handleCloseVeiculoModal}
+        veiculos={veiculos}
+        isLoading={isLoading}
+        error={error}
+        onDeleteVeiculo={handleDeleteVeiculo}
+        onEditVeiculo={handleEditVeiculo}
+        isEditMode={isEditMode}
+        veiculoEditando={veiculoEditando}
+        onSaveEdit={handleSaveEdit}
+        onCancelEdit={handleCancelEdit}
+        onEditFieldChange={handleEditFieldChange}
+      />
+
     </main>
   );
 }
 
-function DashboardCard({ icon: Icon, title, desc, linkText }) {
+// --- Componente do Card (MODIFICADO) ---
+// Agora é uma motion.div e aceita onClick
+function DashboardCard({ icon: Icon, title, desc, linkText, onClick }) {
   return (
-    <motion.a 
-      href="#" 
+    <motion.div 
       className="dash-card"
       variants={fadeUp}
+      onClick={onClick} // Adiciona o handler de clique
+      style={{ cursor: onClick ? 'pointer' : 'default' }} // Muda o cursor se for clicável
     >
       <div className="dash-card-icon">
         <Icon size={24} />
@@ -314,6 +534,250 @@ function DashboardCard({ icon: Icon, title, desc, linkText }) {
         {linkText}
         <ArrowRight size={16} />
       </span>
-    </motion.a>
+    </motion.div>
+  );
+}
+
+
+// --- NOVO COMPONENTE: Modal da Lista de Veículos ---
+function VeiculoListModal({ 
+  isOpen, 
+  onClose, 
+  veiculos, 
+  isLoading, 
+  error, 
+  onDeleteVeiculo,
+  onEditVeiculo,
+  isEditMode,
+  veiculoEditando,
+  onSaveEdit,
+  onCancelEdit,
+  onEditFieldChange
+}) {
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="modal-overlay"
+          onClick={onClose} 
+        >
+          {/* Adicionada a classe 'large' para um modal mais largo */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            className="modal-content large"
+            onClick={(e) => e.stopPropagation()} 
+          >
+            <div className="modal-header">
+              <h3>
+                {isEditMode ? 'Editar Veículo' : 'Veículos Disponíveis'}
+              </h3>
+              <button onClick={onClose} className="modal-close-btn">
+                <X width={24} height={24} />
+              </button>
+            </div>
+            
+            <div className="modal-body">
+              {isLoading && (
+                <div className="loading-state">
+                  <div className="loading-spinner"></div>
+                  <p>Carregando veículos...</p>
+                </div>
+              )}
+              
+              {error && (
+                <div className="error-state">
+                  <p>{error}</p>
+                </div>
+              )}
+              
+              {!isLoading && !error && (
+                <div className="veiculo-list">
+                  {veiculos.length === 0 ? (
+                    <div className="empty-state">
+                      <div className="empty-state-icon">🚗</div>
+                      <p>Nenhum veículo cadastrado no momento.</p>
+                    </div>
+                  ) : (
+                    veiculos.map(veiculo => (
+                      <VeiculoCard 
+                        key={veiculo.id} 
+                        veiculo={veiculo} 
+                        onDelete={onDeleteVeiculo}
+                        onEdit={onEditVeiculo}
+                        isEditMode={isEditMode}
+                        veiculoEditando={veiculoEditando}
+                        onSaveEdit={onSaveEdit}
+                        onCancelEdit={onCancelEdit}
+                        onEditFieldChange={onEditFieldChange}
+                      />
+                    ))
+                  )}
+                </div>
+              )}
+            </div>
+
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+// --- NOVO COMPONENTE: Card do Veículo (para o modal) ---
+function VeiculoCard({ 
+  veiculo, 
+  onDelete, 
+  onEdit,
+  isEditMode,
+  veiculoEditando,
+  onSaveEdit,
+  onCancelEdit,
+  onEditFieldChange
+}) {
+  const isEditing = isEditMode && veiculoEditando && veiculoEditando.id === veiculo.id;
+
+  // Função para formatar o preço para BRL (R$)
+  const formatPrice = (price) => {
+    if (!price) return 'R$ 0,00';
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    }).format(price);
+  };
+
+  if (isEditing) {
+    // Modo de edição
+    return (
+      <div className="veiculo-card editing">
+        <div className="veiculo-card-img-container">
+          <img 
+            src={veiculoEditando.imagemUrl || 'https://placehold.co/300x200/334155/FFF?text=Sem+Foto'} 
+            alt={`${veiculoEditando.marca} ${veiculoEditando.modelo}`} 
+            className="veiculo-card-img"
+          />
+        </div>
+        <div className="veiculo-card-body">
+          <div className="edit-form">
+            <div className="edit-field">
+              <label>Marca</label>
+              <input
+                type="text"
+                value={veiculoEditando.marca}
+                onChange={(e) => onEditFieldChange('marca', e.target.value)}
+                className="edit-input"
+              />
+            </div>
+            <div className="edit-field">
+              <label>Modelo</label>
+              <input
+                type="text"
+                value={veiculoEditando.modelo}
+                onChange={(e) => onEditFieldChange('modelo', e.target.value)}
+                className="edit-input"
+              />
+            </div>
+            <div className="edit-row">
+              <div className="edit-field small">
+                <label>Placa</label>
+                <input
+                  type="text"
+                  value={veiculoEditando.placa}
+                  onChange={(e) => onEditFieldChange('placa', e.target.value)}
+                  className="edit-input"
+                />
+              </div>
+              <div className="edit-field small">
+                <label>Ano</label>
+                <input
+                  type="number"
+                  value={veiculoEditando.ano}
+                  onChange={(e) => onEditFieldChange('ano', e.target.value)}
+                  className="edit-input"
+                />
+              </div>
+            </div>
+            <div className="edit-field">
+              <label>Preço (R$)</label>
+              <input
+                type="number"
+                step="0.01"
+                value={veiculoEditando.preco}
+                onChange={(e) => onEditFieldChange('preco', e.target.value)}
+                className="edit-input"
+              />
+            </div>
+            <div className="edit-field">
+              <label>URL da Imagem</label>
+              <input
+                type="text"
+                value={veiculoEditando.imagemUrl || ''}
+                onChange={(e) => onEditFieldChange('imagemUrl', e.target.value)}
+                className="edit-input"
+                placeholder="https://exemplo.com/foto.jpg"
+              />
+            </div>
+          </div>
+          
+          <div className="veiculo-card-actions">
+            <button 
+              className="btn-save"
+              onClick={onSaveEdit}
+            >
+              <Save size={16} />
+              Salvar
+            </button>
+            <button 
+              className="btn-cancel"
+              onClick={onCancelEdit}
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Modo de visualização normal
+  return (
+    <div className="veiculo-card">
+      <div className="veiculo-card-img-container">
+        <img 
+          src={veiculo.imagemUrl || 'https://placehold.co/300x200/334155/FFF?text=Sem+Foto'} 
+          alt={`${veiculo.marca} ${veiculo.modelo}`} 
+          className="veiculo-card-img"
+        />
+      </div>
+      <div className="veiculo-card-body">
+        <h4 className="veiculo-card-title">{veiculo.marca} {veiculo.modelo}</h4>
+        <span className="veiculo-card-placa">{veiculo.placa}</span>
+        <div className="veiculo-card-details">
+          <span className="veiculo-card-ano">{veiculo.ano}</span>
+          <p className="veiculo-card-preco">{formatPrice(veiculo.preco)}</p>
+        </div>
+        
+        <div className="veiculo-card-actions">
+          <button 
+            className="btn-edit"
+            onClick={() => onEdit(veiculo)}
+          >
+            <Edit size={16} />
+            Editar
+          </button>
+          <button 
+            className="btn-delete"
+            onClick={() => onDelete(veiculo.id)}
+          >
+            <Trash2 size={16} />
+            Excluir
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
