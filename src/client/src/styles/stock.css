@@ -1,0 +1,160 @@
+/* Arquivo: stock.css
+  Este arquivo define os estilos *específicos* da página de Dashboard.
+  Ele depende das variáveis e estilos base definidos em 'landing.css'.
+*/
+
+/* 1. Seção Hero */
+.dash-hero {
+  padding: 96px 0;
+  position: relative;
+  text-align: center;
+  background-color: var(--card); 
+
+  background-image: linear-gradient(rgba(7, 20, 40, 0.8), rgba(7, 20, 40, 0.8)),
+    url('https://placehold.co/1920x600/334155/FFF?text=Estoque');
+  background-size: cover;
+  background-position: center;
+  border-bottom: 1px solid var(--glass);
+}
+
+.dash-hero h1 {
+  font-size: clamp(28px, 4vw, 44px);
+  margin: 0 0 12px 0;
+  line-height: 1.03;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: #fff;
+  max-width: 600px; 
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.dash-hero p {
+  color: var(--muted);
+  margin: 0 auto 24px auto;
+  font-size: 16px;
+  max-width: 500px; 
+}
+
+.dash-hero-cta {
+  display: flex;
+  flex-wrap: wrap; 
+  justify-content: center;
+  gap: 12px;
+}
+
+/* 2. Seção Grid de Ações */
+.dash-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+/* 3. Card de Ação (Veículos disponíveis, vendidos, etc.) */
+.dash-card {
+  display: block; 
+  background: var(--card);
+  border: 1px solid var(--glass);
+  border-radius: var(--radius);
+  padding: 24px;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.3s ease, box-shadow 0.3s ease,
+    background-color 0.3s ease;
+}
+
+.dash-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(2, 6, 23, 0.7);
+  background-color: var(--glass);
+}
+
+.dash-card-icon {
+  width: 48px;
+  height: 48px;
+  background: var(--glass);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent); 
+  margin-bottom: 20px;
+}
+
+.dash-card h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 8px 0;
+}
+
+.dash-card p {
+  font-size: 14px;
+  color: var(--muted);
+  margin: 0 0 20px 0;
+  line-height: 1.5;
+  min-height: 42px; 
+}
+
+.dash-card-link {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.dash-add-form {
+  padding: 48px 24px;
+  margin-top: 72px;
+  border: 1px solid var(--glass);
+  border-radius: var(--radius);
+  text-align: center;
+  background: var(--card);
+}
+
+.dash-add-form h2 {
+  font-size: clamp(26px, 3.5vw, 36px);
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 12px;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+.dash-add-form p {
+  color: var(--muted);
+  font-size: 16px;
+  max-width: 500px;
+  margin: 0 auto 24px auto;
+}
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.fake-select {
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  color: var(--muted);
+  min-width: 250px;
+  text-align: left;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+.fake-select:hover {
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}

@@ -5,7 +5,7 @@ import './index.css';
 
 // 2. Importar suas "páginas"
 import App from './App.jsx'; 
-import CatalogoVeiculos from './pages/CatalogoVeiculos.jsx'; 
+import CatalogoVeiculos from './pages/EstoqueVeiculos.jsx'; 
 
 // 3. Criar o "Diretório" (as rotas)
 const router = createBrowserRouter([
