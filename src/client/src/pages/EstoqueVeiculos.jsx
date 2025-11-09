@@ -1060,7 +1060,7 @@ function VeiculoCard({
 
   // Função para formatar quilometragem
   const formatKm = (km) => {
-    if (!km) return 'N/A';
+    if (km === null || km === undefined || km === '') return 'N/A';
     return new Intl.NumberFormat('pt-BR').format(km) + ' km';
   };
 
@@ -1364,7 +1364,7 @@ function VeiculoCard({
             </div>
           )}
 
-          {veiculo.quilometragem && (
+          {veiculo.quilometragem !== null && veiculo.quilometragem !== undefined && (
             <div className="veiculo-card-info-item">
               <Gauge size={14} className="info-icon" />
               <span className="info-value">{formatKm(veiculo.quilometragem)}</span>
