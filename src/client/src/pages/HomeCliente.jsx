@@ -3,11 +3,11 @@ import HeaderCliente from "../components/HeaderCliente";
 import Footer from "../components/Footer";
 import { useNavigate } from "react-router-dom";
 import { FaCalendarAlt, FaHistory, FaHandshake, FaHeadset, FaCar } from "react-icons/fa";
+import "../styles/home.css"; 
 
 export default function HomeCliente() {
   const navigate = useNavigate();
 
-  // 1) Inicializa já com valor do localStorage (ou "Cliente")
   const [nomeUsuario, setNomeUsuario] = useState(() => {
     try {
       const nome = localStorage.getItem("nomeUsuario");
@@ -19,7 +19,6 @@ export default function HomeCliente() {
     }
   });
 
-  // 2) Se vier ?nome=Gabi na URL, usa e salva
   useEffect(() => {
     try {
       const params = new URLSearchParams(window.location.search);
@@ -28,6 +27,17 @@ export default function HomeCliente() {
         const limpo = nomeParam.trim();
         localStorage.setItem("nomeUsuario", limpo);
         setNomeUsuario(limpo);
+      } else {
+        try {
+          const userRaw = localStorage.getItem("user");
+          if (userRaw) {
+            const userObj = JSON.parse(userRaw);
+            if (userObj?.name) {
+              setNomeUsuario(userObj.name);
+              localStorage.setItem("nomeUsuario", userObj.name);
+            }
+          }
+        } catch {}
       }
     } catch {}
   }, []);
@@ -43,66 +53,61 @@ export default function HomeCliente() {
 
   return (
     <div className="home-wrapper">
-      {/* ====================== CABEÇALHO ====================== */}
+      {/* CABEÇALHO */}
       <HeaderCliente />
 
-      {/* ====================== HERO ====================== */}
+      {/* HERO */}
       <section className="hero-section">
-        <div className="hero-overlay">
-          <div className="hero-content">
-            <h1>
-              Bem-vindo, <span className="nome-destaque">{nomeUsuario}</span>!
-            </h1>
-            <p>Encontre seu próximo veículo com praticidade e confiança.</p>
+        <div className="hero-bg" aria-hidden />
+        <div className="hero-overlay" />
+        <div className="hero-content container">
+          <h1 className="hero-title">
+            Bem-vindo, <span className="nome-destaque">{nomeUsuario}</span>!
+          </h1>
+          <p className="hero-lead">Encontre seu próximo veículo com praticidade e confiança.</p>
 
-            <div className="hero-buttons">
-              <button className="btn" onClick={() => navigate("/buscar")}>
-                Buscar Veículos
-              </button>
-              <button className="btn-outline" onClick={() => navigate("/veiculos")}>
-                Ver todos
-              </button>
-            </div>
+          <div className="hero-buttons">
+            <button className="btn" onClick={() => navigate("/cliente/buscar")}>Buscar Veículos</button>
+            <button className="btn-outline" onClick={() => navigate("/catalog")}>Ver todos</button>
           </div>
         </div>
       </section>
 
-      {/* ====================== CONTEÚDO PRINCIPAL ====================== */}
-      <main className="home-container">
-        {/* ===== SUAS AÇÕES ===== */}
+      {/* CONTEÚDO PRINCIPAL */}
+      <main className="home-container container">
         <section className="actions-section">
           <h2>Suas Ações</h2>
-          <p>Gerencie tudo de forma prática e segura.</p>
+          <p className="muted">Gerencie tudo de forma prática e segura.</p>
 
           <div className="actions-grid">
-            <div className="action-card" onClick={() => navigate("/agenda")}>
+            <div className="action-card" onClick={() => navigate("/cliente/agenda")}>
               <FaCalendarAlt className="icon" />
               <h3>Minha Agenda</h3>
             </div>
 
-            <div className="action-card" onClick={() => navigate("/historico")}>
+            <div className="action-card" onClick={() => navigate("/cliente/historico")}>
               <FaHistory className="icon" />
               <h3>Histórico</h3>
             </div>
 
-            <div className="action-card" onClick={() => navigate("/propostas")}>
+            <div className="action-card" onClick={() => navigate("/cliente/propostas")}>
               <FaHandshake className="icon" />
               <h3>Propostas</h3>
             </div>
 
-            <div className="action-card" onClick={() => navigate("/catalogo")}>
+            <div className="action-card" onClick={() => navigate("/cliente/catalogo")}>
               <FaCar className="icon" />
               <h3>Ver Catálogo</h3>
             </div>
 
-            <div className="action-card" onClick={() => navigate("/suporte")}>
+            <div className="action-card" onClick={() => navigate("/cliente/suporte")}>
               <FaHeadset className="icon" />
               <h3>Suporte</h3>
             </div>
           </div>
         </section>
 
-        {/* ===== BENEFÍCIOS ===== */}
+        {/* BENEFÍCIOS */}
         <section className="benefit-section">
           <div className="benefit-card">
             <img
@@ -113,8 +118,6 @@ export default function HomeCliente() {
               <h2>Por que escolher a GesCar?</h2>
               <p>
                 Escolher a GesCar é investir em confiança, transparência e atendimento personalizado.
-                Nossos clientes têm acesso a condições especiais, suporte completo e veículos selecionados
-                com garantia de procedência.
               </p>
             </div>
           </div>
@@ -130,18 +133,18 @@ export default function HomeCliente() {
               <h2>Para quem já é cliente</h2>
               <p>
                 Nossos clientes contam com benefícios exclusivos: descontos em revisões,
-                atendimento prioritário e oportunidades únicas para trocar ou atualizar seu veículo.
+                atendimento prioritário e oportunidades únicas.
               </p>
             </div>
           </div>
         </section>
 
-        {/* ===== OFERTAS ===== */}
+        {/* OFERTAS */}
         <section className="offers-section">
           <h2>Ofertas</h2>
-          <p>Confira as melhores oportunidades selecionadas para você.</p>
+          <p className="muted">Confira as melhores oportunidades selecionadas para você.</p>
 
-          <div className="offer-card-bg" onClick={() => navigate("/ofertas")}>
+          <div className="offer-card-bg">
             <div className="offer-bg-overlay">
               <p>Aproveite preços exclusivos e veículos selecionados.</p>
               <button className="offer-btn-bg">Ver Ofertas</button>
@@ -150,14 +153,8 @@ export default function HomeCliente() {
         </section>
       </main>
 
-      {/* ====================== RODAPÉ ====================== */}
-      <footer className="footer">
-        <p>© 2025 CanutoMotors. Todos os direitos reservados.</p>
-        <div className="links">
-          <a href="#">Política de Privacidade</a> |{" "}
-          <a href="#">Termos de Uso</a> | <a href="#">Ajuda</a>
-        </div>
-      </footer>
+      {/* RODAPÉ */}
+      <Footer />
     </div>
   );
 }
