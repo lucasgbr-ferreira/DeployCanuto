@@ -56,10 +56,10 @@ export default function HomeCliente() {
             <p>Encontre seu próximo veículo com praticidade e confiança.</p>
 
             <div className="hero-buttons">
-              <button className="btn" onClick={() => navigate("/buscar")}>
+              <button className="btn" onClick={() => navigate("/catalog")}>
                 Buscar Veículos
               </button>
-              <button className="btn-outline" onClick={() => navigate("/veiculos")}>
+              <button className="btn-outline" onClick={() => navigate("/catalog")}>
                 Ver todos
               </button>
             </div>
@@ -75,27 +75,27 @@ export default function HomeCliente() {
           <p>Gerencie tudo de forma prática e segura.</p>
 
           <div className="actions-grid">
-            <div className="action-card" onClick={() => navigate("/agenda")}>
+            <div className="action-card" onClick={() => navigate("/home_cliente")}>
               <FaCalendarAlt className="icon" />
               <h3>Minha Agenda</h3>
             </div>
 
-            <div className="action-card" onClick={() => navigate("/historico")}>
+            <div className="action-card" onClick={() => navigate("/home_cliente")}>
               <FaHistory className="icon" />
               <h3>Histórico</h3>
             </div>
 
-            <div className="action-card" onClick={() => navigate("/propostas")}>
+            <div className="action-card" onClick={() => navigate("/home_cliente")}>
               <FaHandshake className="icon" />
               <h3>Propostas</h3>
             </div>
 
-            <div className="action-card" onClick={() => navigate("/catalogo")}>
+            <div className="action-card" onClick={() => navigate("/catalog")}>
               <FaCar className="icon" />
               <h3>Ver Catálogo</h3>
             </div>
 
-            <div className="action-card" onClick={() => navigate("/suporte")}>
+            <div className="action-card" onClick={() => navigate("/home_cliente")}>
               <FaHeadset className="icon" />
               <h3>Suporte</h3>
             </div>
