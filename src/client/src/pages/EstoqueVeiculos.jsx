@@ -504,17 +504,40 @@ export default function EstoqueVeiculos() {
   };
 
   const navLinks = [
-    { name: 'Início', href: '/' },
+    { name: 'Início', href: '/dashboard/estoque' },
     { name: 'Veículos', href: '/catalog' },
-    { name: 'Promoções', href: '/promocoes' },
+    { name: 'Promoções', href: '/catalog' },
   ];
 
   return (
     <main className="lp-root">
 
-      {/* 1. Navbar */}
+      {/* 1. Navbar (Menu Superior) */}
       <nav className="lp-header">
+        <div className="lp-container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Link to="/" className="lp-brand">
+            <CarFront />
+            CanutoMotors
+          </Link>
 
+          {/* Menu Desktop */}
+          <div className="lp-nav">
+            {navLinks.map((link) => (
+              <Link key={link.name} to={link.href} className="nav-link">
+                {link.name}
+              </Link>
+            ))}
+            <ProfileDropdown />
+
+          </div>
+
+          {/* Botão Mobile */}
+          <div className="mobile-menu-btn" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+            {isMobileMenuOpen ? <X /> : <Menu />}
+          </div>
+        </div>
+
+        {/* Menu Mobile Dropdown */}
         <AnimatePresence>
           {isMobileMenuOpen && (
             <motion.div
