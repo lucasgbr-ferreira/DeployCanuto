@@ -213,29 +213,29 @@ return (
               icon={<Car size={20} />}
               title="Gerenciamento de Estoque"
               line1="Cadastre e edite veículos facilmente com fotos, preços e condições."
-              accentFrom="#40c9ff"
-              accentTo="#0099ff"
+              accentFrom="#565656ff"
+              accentTo="#bd07d8ff"
             />
             <FeatureCard
               icon={<CalendarCheck size={20} />}
               title="Agendamento de Testes"
               line1="Organize test drives e visitas com confirmação direta na plataforma."
-              accentFrom="#ffb86b"
-              accentTo="#ff7a7a"
+              accentFrom="#565656ff"
+              accentTo="#bd07d8ff"
             />
             <FeatureCard
               icon={<BarChart3 size={20} />}
               title="Painel de Vendas"
               line1="Acompanhe métricas, propostas e desempenho da equipe."
-              accentFrom="#8ff5a8"
-              accentTo="#4fd1c5"
+              accentFrom="#565656ff"
+              accentTo="#bd07d8ff"
             />
             <FeatureCard
               icon={<Users size={20} />}
               title="Gestão de Equipe"
               line1="Controle permissões e acompanhe produtividade do time."
-              accentFrom="#d87bff"
-              accentTo="#8b6eff"
+              accentFrom="#565656ff"
+              accentTo="#bd07d8ff"
             />
           </div>
         </div>
@@ -265,29 +265,29 @@ return (
               icon={<ShoppingCart size={20} />}
               title="Busca Inteligente"
               line1="Encontre o carro ideal com filtros de preço, marca e condição."
-              accentFrom="#7bdff5"
-              accentTo="#4fd1c5"
+              accentFrom="#565656ff"
+              accentTo="#0693d5ff"
             />
             <FeatureCard
               icon={<ClipboardList size={20} />}
               title="Propostas Diretas"
               line1="Envie ofertas e negocie diretamente com a concessionária."
-              accentFrom="#ffd166"
-              accentTo="#ff9966"
+              accentFrom="#565656ff"
+              accentTo="#0693d5ff"
             />
             <FeatureCard
               icon={<CreditCard size={20} />}
               title="Histórico de Compras"
               line1="Visualize ofertas anteriores e acompanhe o status das propostas."
-              accentFrom="#a29bfe"
-              accentTo="#6c5ce7"
+              accentFrom="#565656ff"
+              accentTo="#0693d5ff"
             />
             <FeatureCard
               icon={<ShieldCheck size={20} />}
               title="Segurança Garantida"
               line1="Ambiente seguro com validação de dados e proteção de informações."
-              accentFrom="#00dbde"
-              accentTo="#fc00ff"
+              accentFrom="#565656ff"
+              accentTo="#0693d5ff"
             />
           </div>
         </div>

@@ -55,7 +55,6 @@ export default function App() {
       <Route path="/catalog" element={<CatalogoVeiculos />} />
       <Route path="/cliente/catalogo" element={<div style={{textAlign:'center',marginTop:80}}>Página de Catálogo de Veículos</div>} />
       <Route path="/home_cliente" element={<HomeCliente />} />
-      <Route path="/home" element={<HomeCliente />} />
       <Route path="/cliente/buscar" element={<div style={{textAlign:'center',marginTop:80}}>Página de Buscar Veículos</div>} />
       <Route path="/cliente/veiculos" element={<div style={{textAlign:'center',marginTop:80}}>Página de Veículos</div>} />
       <Route path="/cliente/agenda" element={<div style={{textAlign:'center',marginTop:80}}>Página de Minha Agenda</div>} />

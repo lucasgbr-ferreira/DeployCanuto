@@ -1,20 +1,32 @@
 // src/components/Button.jsx
 import React from "react";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
 const Button = () => {
+  const navigate = useNavigate();
+
+  function handleClick() {
+    navigate("/login");
+  }
+
   return (
     <StyledWrapper>
-      <button className="animated-button" aria-label="Começar">
-        <svg xmlns="http://www.w3.org/2000/svg" className="arr-2" viewBox="0 0 24 24">
+      <button
+        type="button"
+        className="animated-button"
+        aria-label="Começar"
+        onClick={handleClick}
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" className="arr-2" viewBox="0 0 24 24" aria-hidden>
           <path d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z" />
         </svg>
 
-        <span className="text">COMEÇAR</span>
+        <span className="text">ENTRAR</span>
 
-        <span className="circle" />
+        <span className="circle" aria-hidden />
 
-        <svg xmlns="http://www.w3.org/2000/svg" className="arr-1" viewBox="0 0 24 24">
+        <svg xmlns="http://www.w3.org/2000/svg" className="arr-1" viewBox="0 0 24 24" aria-hidden>
           <path d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z" />
         </svg>
       </button>
@@ -31,7 +43,7 @@ const StyledWrapper = styled.div`
     padding: 12px 20px;
     border: 2px solid transparent;
     font-size: 14px;
-    background-color: rgba(255,255,255,0.06); /* leve contraste sobre fundo escuro */
+    background-color: rgba(255,255,255,0.06);
     border-radius: 100px;
     font-weight: 700;
     color: #ffffff;
@@ -39,6 +51,7 @@ const StyledWrapper = styled.div`
     cursor: pointer;
     overflow: hidden;
     transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
+    border: none;
   }
 
   .animated-button svg {
@@ -50,6 +63,7 @@ const StyledWrapper = styled.div`
     z-index: 9;
     transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
     opacity: 0.9;
+    pointer-events: none;
   }
 
   .animated-button .arr-1 {
@@ -71,6 +85,7 @@ const StyledWrapper = styled.div`
     border-radius: 50%;
     opacity: 0;
     transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    pointer-events: none;
   }
 
   .animated-button .text {
@@ -84,7 +99,7 @@ const StyledWrapper = styled.div`
   .animated-button:hover {
     box-shadow: 0 12px 40px rgba(0,0,0,0.6);
     color: #0b1220;
-    background-color: #c5e5e4; /* inverte visual ao hover */
+    background-color: #c5e5e4;
     border-radius: 12px;
   }
 
@@ -116,5 +131,4 @@ const StyledWrapper = styled.div`
     opacity: 1;
   }
 `;
-
 export default Button;

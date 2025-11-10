@@ -63,7 +63,7 @@ export default function PerfilCliente() {
 
   // quando o login existir, isso vira o id real do usuário
   const userId = 1;
-  const token = ""; //vazio até login existir
+  const token = ""; 
 
   const [fotoPreview, setFotoPreview] = useState(null);
   const [fotoFile, setFotoFile] = useState(null);

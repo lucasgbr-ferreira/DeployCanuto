@@ -12,13 +12,13 @@ export default function Header() {
 
       {/* MENU CENTRAL */}
       <nav className="nav-menu">
-        <a href="#">Início</a>
+        <a href="/home_cliente">Início</a>
         <span className="separator">|</span>
         <a href="#">Veículos</a>
         <span className="separator">|</span>
         <a href="#">Promoções</a>
         <span className="separator">|</span>
-        <a href="#">Perfil</a>
+        <a href="/perfil">Perfil</a>
       </nav>
 
       {/* BOTÃO SAIR */}
