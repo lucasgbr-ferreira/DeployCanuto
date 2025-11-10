@@ -32,8 +32,6 @@ export default function HomeCliente() {
     } catch {}
   }, []);
 
-  // 3) Exponho um helper de DEV para testar sem login:
-  //    No console, rode: window.setNomeTeste("Gabi")
   useEffect(() => {
     window.setNomeTeste = (novo) => {
       const limpo = (novo || "").trim() || "Cliente";
@@ -112,9 +110,9 @@ export default function HomeCliente() {
               alt="Por que escolher a Canuto"
             />
             <div className="benefit-text">
-              <h2>Por que escolher a CanutoMotors?</h2>
+              <h2>Por que escolher a GesCar?</h2>
               <p>
-                Escolher a CanutoMotors é investir em confiança, transparência e atendimento personalizado.
+                Escolher a GesCar é investir em confiança, transparência e atendimento personalizado.
                 Nossos clientes têm acesso a condições especiais, suporte completo e veículos selecionados
                 com garantia de procedência.
               </p>
