@@ -6,6 +6,7 @@ import CatalogoVeiculos from "./pages/CatalogoVeiculos";
 import EstoqueVeiculos from "./pages/EstoqueVeiculos";
 import PerfilCliente from "./pages/PerfilCliente";
 import HomeCliente from "./pages/HomeCliente";
+import HomeConcessionaria from "./pages/HomeConcessionaria.jsx"
 
 
 const FallbackRegister = () => (
@@ -42,7 +43,7 @@ export default function App() {
 
   return (
     <Routes>
-      <Route path="/" element={<LandingPage />} />
+      <Route path="/" element={<HomeConcessionaria />} />
       <Route path="/landing" element={<LandingPage />} />
       <Route
         path="/register"
@@ -55,6 +56,7 @@ export default function App() {
       <Route path="/catalog" element={<CatalogoVeiculos />} />
       <Route path="/cliente/catalogo" element={<div style={{textAlign:'center',marginTop:80}}>Página de Catálogo de Veículos</div>} />
       <Route path="/home_cliente" element={<HomeCliente />} />
+      <Route path="/home_concessionaria" element={<HomeConcessionaria />} />
       <Route path="/cliente/buscar" element={<div style={{textAlign:'center',marginTop:80}}>Página de Buscar Veículos</div>} />
       <Route path="/cliente/veiculos" element={<div style={{textAlign:'center',marginTop:80}}>Página de Veículos</div>} />
       <Route path="/cliente/agenda" element={<div style={{textAlign:'center',marginTop:80}}>Página de Minha Agenda</div>} />
