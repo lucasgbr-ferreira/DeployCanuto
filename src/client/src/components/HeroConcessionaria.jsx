@@ -9,7 +9,7 @@ import FundoHero from "../assets/fundo_homepageConcessionaria.jpg";
 
 // PRINCIPAL //
 
-export default function HeroConcessionaria() {
+export default function HeroConcessionaria({ nome }) {
   return (
     <section 
       className="hero-concessionaria"
@@ -23,7 +23,7 @@ export default function HeroConcessionaria() {
         </h1>
 
         <h1 className="hero-title-strong">
-          Concessionaria
+          {nome ? nome : "Concessionária"}
         </h1>
 
         <p className="hero-subtitle">
