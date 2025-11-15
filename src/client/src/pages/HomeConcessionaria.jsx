@@ -5,6 +5,7 @@
 import React, { useEffect, useState } from "react";
 import HeaderConcessionaria from '../components/HeaderConcessionaria.jsx';
 import HeroConcessionaria from '../components/HeroConcessionaria.jsx';
+import ContactConcessionaria from '../components/ContactConcessionaria.jsx'
 // IMPORTS //
 
 // CONTEÚDO DA PÁGINA //
@@ -22,6 +23,7 @@ export default function HomeConcessionaria() {
         <div>
             <HeaderConcessionaria />
             <HeroConcessionaria nome={nomeUsuario} />
+            <ContactConcessionaria />
         </div>
     );
 }
