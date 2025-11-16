@@ -31,8 +31,7 @@ export default function HeroConcessionaria({ nome }) {
         </p>
 
         <div className="hero-buttons">
-          <button className="btn-primary">Buscar</button>
-          <button className="btn-secondary">Explorar</button>
+          <button className="btn-primary">Catálogo De Veíuclos</button>
         </div>
       </div>
     </section>

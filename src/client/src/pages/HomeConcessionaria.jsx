@@ -7,6 +7,7 @@ import HeaderConcessionaria from '../components/HeaderConcessionaria.jsx';
 import HeroConcessionaria from '../components/HeroConcessionaria.jsx';
 import ContactConcessionaria from '../components/ContactConcessionaria.jsx'
 import FooterConcessionaria from '../components/FooterConcessionaria.jsx'
+import DestaqueConcessionaria from '../components/DestaqueConcessionaria.jsx'
 // IMPORTS //
 
 // CONTEÚDO DA PÁGINA //
@@ -31,10 +32,8 @@ export default function HomeConcessionaria() {
     return (
         <div>
             <HeaderConcessionaria />
-
             <HeroConcessionaria nome={nomeUsuario} />
-
-            {/* Só renderiza quando tiver os dados */}
+            <DestaqueConcessionaria />
             {concessionaria && (
                 <ContactConcessionaria
                     email={concessionaria.email_comercial}
@@ -42,7 +41,6 @@ export default function HomeConcessionaria() {
                     endereco={concessionaria.endereco}
                 />
             )}
-
             <FooterConcessionaria nome={nomeUsuario}/>
         </div>
     );

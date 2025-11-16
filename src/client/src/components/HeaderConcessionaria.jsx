@@ -1,13 +1,12 @@
 import React from "react";
 import "../styles/landing.css";
-import Logo from "../assets/GesCar-Logo-removebg-preview.png"; 
 
 export default function HeaderCliente() {
   return (
     <header className="lp-header">
       <div className="lp-brand">
         <a href="/home_concessionaria">
-          <img src={Logo} alt="Concessionaria" className="lp-logo" />
+          <img src="{}" alt="logoconces" className="lp-logo" />
         </a>
       </div>
 
