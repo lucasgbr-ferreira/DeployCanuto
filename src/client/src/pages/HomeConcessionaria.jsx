@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import HeaderConcessionaria from '../components/HeaderConcessionaria.jsx';
 import HeroConcessionaria from '../components/HeroConcessionaria.jsx';
 import ContactConcessionaria from '../components/ContactConcessionaria.jsx'
+import FooterConcessionaria from '../components/FooterConcessionaria.jsx'
 // IMPORTS //
 
 // CONTEÚDO DA PÁGINA //
@@ -41,6 +42,8 @@ export default function HomeConcessionaria() {
                     endereco={concessionaria.endereco}
                 />
             )}
+
+            <FooterConcessionaria nome={nomeUsuario}/>
         </div>
     );
 }
