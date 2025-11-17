@@ -1,6 +1,6 @@
 // src/pages/HomeConcessionaria.jsx //
 
-// IMPORTS //
+//  IMPORTS //
 
 import React, { useEffect, useState } from "react";
 import HeaderConcessionaria from '../components/HeaderConcessionaria.jsx';
@@ -8,7 +8,7 @@ import HeroConcessionaria from '../components/HeroConcessionaria.jsx';
 import ContactConcessionaria from '../components/ContactConcessionaria.jsx'
 import FooterConcessionaria from '../components/FooterConcessionaria.jsx'
 import DestaqueConcessionaria from '../components/DestaqueConcessionaria.jsx'
-// IMPORTS //
+//  IMPORTS  //
 
 // CONTEÚDO DA PÁGINA //
 
