@@ -1,6 +1,7 @@
 import React from "react";
 import "../styles/landing.css";
 
+//
 export default function HeaderCliente() {
   return (
     <header className="lp-header">
