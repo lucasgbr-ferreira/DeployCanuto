@@ -25,7 +25,14 @@ import {
   Calendar,
   Palette,
   Fuel,
-  Settings
+  Settings,
+  BarChart3,
+  CalendarCheck,
+  MessageCircle,
+  ClipboardList,
+  ShoppingCart,
+  CreditCard,
+  ShieldCheck
 } from 'lucide-react';
 
 import "../styles/landing.css";
@@ -613,19 +620,37 @@ export default function EstoqueVeiculos() {
         viewport={{ once: true, amount: 0.3 }}
         variants={staggerContainer}
       >
-        <div className="lp-container" style={{ marginTop: "40px" }}>
-          <motion.h2 variants={fadeUp} custom={0.1}>
-            Catálogo completo
+        <div className="lp-container" style={{ marginTop: "48px", textAlign: "center" }}>
+          <motion.h2
+            variants={fadeUp}
+            custom={0.1}
+            style={{
+              color: '#ffffff',
+              fontSize: 'clamp(26px, 4vw, 36px)',
+              fontWeight: 700,
+              marginBottom: '12px'
+            }}
+          >
+            Catálogo Completo
           </motion.h2>
-          <motion.p variants={fadeUp} custom={0.2}>
+          <motion.p
+            variants={fadeUp}
+            custom={0.2}
+            style={{
+              color: 'rgba(255, 255, 255, 0.9)',
+              fontSize: '17px',
+              maxWidth: '500px',
+              margin: '0 auto',
+              lineHeight: '1.5'
+            }}
+          >
             Visualize todos os veículos cadastrados em um único lugar.
           </motion.p>
         </div>
-
       </motion.section>
 
-      {/* 4. Seção Grid de Ações */}
-      <main className="lp-container" style={{ paddingBottom: '72px', paddingTop: '36px' }}>
+      {/* 4. Seção Grid de Ações - ATUALIZADA COM CARDS DA LANDING PAGE */}
+      <main className="lp-container" style={{ paddingBottom: '80px', paddingTop: '40px' }}>
         <motion.div
           className="dash-grid"
           initial="hidden"
@@ -633,28 +658,34 @@ export default function EstoqueVeiculos() {
           viewport={{ once: true, amount: 0.1 }}
           variants={staggerContainer}
         >
-          <DashboardCard
-            icon={Car}
+          <FeatureCard
+            icon={<Car size={20} />}
             title="Veículos disponíveis para venda"
-            desc="Confira os detalhes de cada veículo do estoque."
-            linkText="Detalhes"
+            line1="Confira os detalhes de cada veículo do estoque."
+            linkText="Visualizar Veículos"
             onClick={handleOpenVeiculoModal}
+            accentFrom="#565656ff"
+            accentTo="#bd07d8ff"
           />
-          <DashboardCard
-            icon={CheckSquare}
+          <FeatureCard
+            icon={<CheckSquare size={20} />}
             title="Veículos vendidos"
-            desc="Histórico de vendas concluídas."
-            linkText="Relatório"
+            line1="Histórico de vendas concluídas."
+            linkText="Ver Relatório"
+            accentFrom="#565656ff"
+            accentTo="#bd07d8ff"
           />
-          <DashboardCard
-            icon={Wrench}
+          <FeatureCard
+            icon={<Wrench size={20} />}
             title="Veículos em manutenção"
-            desc="Acompanhe veículos temporariamente indisponíveis."
-            linkText="Manutenção"
+            line1="Acompanhe veículos temporariamente indisponíveis."
+            linkText="Gerenciar"
+            accentFrom="#565656ff"
+            accentTo="#bd07d8ff"
           />
         </motion.div>
 
-        {/* 5. Seção Adicionar Veículo (MODIFICADA COM VALIDAÇÕES) */}
+        {/* 5. Seção Adicionar Veículo */}
         <motion.section
           id="add-veiculo"
           className="dash-add-form"
@@ -970,24 +1001,33 @@ export default function EstoqueVeiculos() {
   );
 }
 
-// --- Componente do Card ---
-function DashboardCard({ icon: Icon, title, desc, linkText, onClick }) {
+// --- Componente FeatureCard (reaproveitado da Landing Page) ---
+function FeatureCard({ icon, title, line1, linkText, onClick, accentFrom, accentTo }) {
   return (
     <motion.div
-      className="dash-card"
-      variants={fadeUp}
+      className="feature-card"
       onClick={onClick}
       style={{ cursor: onClick ? 'pointer' : 'default' }}
+      variants={fadeUp}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.98 }}
     >
-      <div className="dash-card-icon">
-        <Icon size={24} />
+      <div 
+        className="feature-ico"
+        style={{
+          background: `linear-gradient(135deg, ${accentFrom}, ${accentTo})`
+        }}
+      >
+        {icon}
       </div>
       <h3>{title}</h3>
-      <p>{desc}</p>
-      <span className="dash-card-link">
-        {linkText}
-        <ArrowRight size={16} />
-      </span>
+      <p>{line1}</p>
+      {linkText && (
+        <span className="feature-card-link">
+          {linkText}
+          <ArrowRight size={16} />
+        </span>
+      )}
     </motion.div>
   );
 }
@@ -1082,7 +1122,7 @@ function VeiculoListModal({
   );
 }
 
-// --- Componente: Card do Veículo (MELHORADO COM FORMULÁRIO DE EDIÇÃO REORGANIZADO) ---
+// --- Componente: Card do Veículo ---
 function VeiculoCard({
   veiculo,
   onDelete,
@@ -1112,7 +1152,7 @@ function VeiculoCard({
   };
 
   if (isEditing) {
-    // Modo de edição - MELHORADO
+    // Modo de edição
     return (
       <div className="veiculo-card editing">
         <div className="veiculo-card-img-container">
@@ -1381,9 +1421,7 @@ function VeiculoCard({
     );
   }
 
-  // ... resto do código do modo de visualização normal mantido igual ...
-
-  // Modo de visualização normal - MELHORADO
+  // Modo de visualização normal
   return (
     <div className="veiculo-card">
       <div className="veiculo-card-img-container">
@@ -1402,7 +1440,7 @@ function VeiculoCard({
           <span className="veiculo-card-placa">{veiculo.placa}</span>
         </div>
 
-        {/* MELHORADO: Informações principais em grid */}
+        {/* Informações principais em grid */}
         <div className="veiculo-card-grid">
           {veiculo.ano && (
             <div className="veiculo-card-info-item">

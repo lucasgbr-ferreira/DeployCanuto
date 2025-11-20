@@ -136,43 +136,57 @@ export default function CatalogoVeiculos() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [veiculos, setVeiculos] = useState([]);
+  const [filteredVeiculos, setFilteredVeiculos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Buscar veículos do banco de dados
+  // Buscar veículos do catálogo (APENAS USUÁRIOS LOGADOS)
   useEffect(() => {
     const fetchVeiculos = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.get('http://localhost:3000/api/veiculos');
-        
-        // Adicionar informações da concessionária aos veículos
-        const veiculosComConcessionaria = await Promise.all(
-          response.data.map(async (veiculo) => {
-            try {
-              // Buscar informações da concessionária
-              if (veiculo.concessionaria_id) {
-                const concessionariaResponse = await axios.get(`http://localhost:3000/api/concessionarias/${veiculo.concessionaria_id}`);
-                return {
-                  ...veiculo,
-                  concessionaria: concessionariaResponse.data
-                };
-              }
-              return veiculo;
-            } catch (error) {
-              console.error(`Erro ao buscar concessionária para veículo ${veiculo.id}:`, error);
-              return {
-                ...veiculo,
-                concessionaria: { nome: 'Concessionária não disponível' }
-              };
-            }
-          })
-        );
-        
-        setVeiculos(veiculosComConcessionaria);
+
+        // Pega o token salvo no login (ajuste se você usa outro nome)
+        const token = localStorage.getItem('token');
+
+        if (!token) {
+          setError('Você precisa estar logado para ver o catálogo.');
+          // Opcional: redirecionar para login
+          // navigate('/login');
+          return;
+        }
+
+        const response = await axios.get('http://localhost:3000/api/veiculos/catalogo', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        // Dados já vêm com a concessionária incluída (graças ao include no backend)
+        // Então NÃO precisamos fazer 1 requisição por veículo → muito mais rápido!
+        const veiculos = response.data.map(veiculo => ({
+          ...veiculo,
+          concessionariaNome: veiculo.concessionaria?.nome || 'Concessionária não informada',
+          concessionariaTelefone: veiculo.concessionaria?.telefone || null,
+          concessionariaEmail: veiculo.concessionaria?.email_comercial || null,
+          concessionariaEndereco: veiculo.concessionaria?.endereco || null,
+        }));
+
+        setVeiculos(veiculos);
+        setFilteredVeiculos(veiculos); // se você usa filtro
+
       } catch (err) {
-        console.error("Erro ao buscar veículos:", err);
-        setError("Não foi possível carregar os veículos. Tente novamente mais tarde.");
+        console.error("Erro ao buscar veículos do catálogo:", err);
+
+        if (err.response?.status === 401) {
+          setError('Sua sessão expirou. Faça login novamente.');
+          localStorage.removeItem('token');
+          // Opcional: navigate('/login');
+        } else if (err.response?.status === 403) {
+          setError('Acesso negado. Verifique suas permissões.');
+        } else {
+          setError('Não foi possível carregar os veículos. Tente novamente mais tarde.');
+        }
       } finally {
         setIsLoading(false);
       }
