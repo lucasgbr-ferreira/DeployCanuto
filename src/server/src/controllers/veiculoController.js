@@ -16,45 +16,34 @@ export const createVeiculo = async (req, res) => {
 
   const t = await sequelize.transaction();
   try {
-    const dadosVeiculo = req.body;
+    const dados = { ...req.body };
 
     // Campos obrigatórios
-    if (!dadosVeiculo.placa || !dadosVeiculo.modelo || !dadosVeiculo.marca) {
-      return res.status(400).json({
-        message: 'Placa, modelo e marca são obrigatórios'
-      });
-    }
-
-    // Formatar placa
-    if (dadosVeiculo.placa) {
-      dadosVeiculo.placa = dadosVeiculo.placa.toUpperCase().replace(/\s/g, '');
-    }
-
-    const dados = req.body;
-
     if (!dados.placa || !dados.modelo || !dados.marca) {
       await t.rollback();
       return res.status(400).json({ message: 'Placa, modelo e marca são obrigatórios' });
     }
 
-    dados.placa = dados.placa.toUpperCase().replace(/\s/g, '');
+    // Formatar placa
+    if (dados.placa) {
+      dados.placa = dados.placa.toUpperCase().replace(/\s/g, '');
+    }
 
     const dadosProcessados = {
       ...dados,
-      ano: dados.ano ? parseInt(dados.ano) : null,
+      ano: dados.ano ? parseInt(dados.ano, 10) : null,
       preco: dados.preco ? parseFloat(dados.preco) : null,
-      quilometragem: dados.quilometragem ? parseInt(dados.quilometragem) : null,
+      quilometragem: dados.quilometragem ? parseInt(dados.quilometragem, 10) : null,
       concessionaria_id: req.user.concessionaria_id,
     };
 
-    // REMOVIDO: imagemUrl do processamento
+    // Remover campo que não faz parte do modelo
     delete dadosProcessados.imagemUrl;
 
     const novoVeiculo = await Veiculo.create(dadosProcessados, { transaction: t });
-    
-    await t.commit();
-    res.status(201).json(novoVeiculo);
 
+    await t.commit();
+    return res.status(201).json(novoVeiculo);
   } catch (error) {
     await t.rollback();
     console.error('Erro ao criar veículo:', error);
@@ -65,10 +54,13 @@ export const createVeiculo = async (req, res) => {
     if (error.name === 'SequelizeUniqueConstraintError') {
       return res.status(400).json({ message: 'Placa já cadastrada no sistema' });
     }
-    res.status(500).json({ message: 'Erro interno do servidor' });
+    return res.status(500).json({ message: 'Erro interno do servidor' });
   }
 };
 
+// =============================
+// LIST ALL (concessionária)
+// =============================
 export const getAllVeiculos = async (req, res) => {
   if (req.user.role !== 'concessionaria') {
     return res.status(403).json({ message: 'Acesso negado: Apenas concessionárias' });
@@ -77,112 +69,112 @@ export const getAllVeiculos = async (req, res) => {
   try {
     const veiculos = await Veiculo.findAll({
       where: { concessionaria_id: req.user.concessionaria_id },
-      include: [{
-        model: VeiculoPhoto,
-        as: 'photos',
-        attributes: ['id', 'filename', 'content_type', 'size', 'created_at']
-      }],
+      include: [
+        {
+          model: VeiculoPhoto,
+          as: 'photos',
+          attributes: ['id', 'filename', 'content_type', 'size', 'created_at'],
+        },
+      ],
       order: [['createdAt', 'DESC']],
     });
-    res.status(200).json(veiculos);
-
+    return res.status(200).json(veiculos);
   } catch (error) {
     console.error('Erro ao buscar veículos:', error);
-    res.status(500).json({
-      message: "Erro ao buscar veículos"
-    });
+    return res.status(500).json({ message: 'Erro ao buscar veículos' });
   }
 };
 
 // =============================
-// READ BY ID (NOVO)
+// READ BY ID
 // =============================
 export const getVeiculo = async (req, res) => {
   try {
     const { id } = req.params;
-    const veiculo = await Veiculo.findByPk(id);
+    const veiculo = await Veiculo.findByPk(id, {
+      include: [
+        {
+          model: VeiculoPhoto,
+          as: 'photos',
+          attributes: ['id', 'filename', 'content_type', 'size', 'created_at'],
+        },
+      ],
+    });
 
     if (!veiculo) {
-      return res.status(404).json({
-        message: "Veículo não encontrado"
-      });
+      return res.status(404).json({ message: 'Veículo não encontrado' });
     }
 
-    res.status(200).json(veiculo);
-
+    return res.status(200).json(veiculo);
   } catch (error) {
     console.error('Erro ao buscar veículo:', error);
-    res.status(500).json({
-      message: 'Erro ao buscar veículo'
-    });
+    return res.status(500).json({ message: 'Erro ao buscar veículo' });
   }
 };
 
 // =============================
 // UPDATE
 // =============================
-    console.error('Erro ao buscar estoque:', error);
-    res.status(500).json({ message: 'Erro ao carregar estoque' });
-  }
-};
-
 export const updateVeiculo = async (req, res) => {
   if (req.user.role !== 'concessionaria') {
     return res.status(403).json({ message: 'Acesso negado' });
   }
 
-    if (!veiculo) {
-      return res.status(404).json({
-        message: "Veículo não encontrado"
-      });
   const t = await sequelize.transaction();
   try {
     const veiculo = await Veiculo.findByPk(req.params.id);
-    if (!veiculo || veiculo.concessionaria_id !== req.user.concessionaria_id) {
+    if (!veiculo) {
+      await t.rollback();
+      return res.status(404).json({ message: 'Veículo não encontrado' });
+    }
+    if (veiculo.concessionaria_id !== req.user.concessionaria_id) {
       await t.rollback();
       return res.status(403).json({ message: 'Veículo não pertence à sua concessionária' });
     }
 
+    // Normalizar placa
     if (req.body.placa) {
       req.body.placa = req.body.placa.toUpperCase().replace(/\s/g, '');
     }
 
-    const dados = {
+    const dadosAtualizados = {
       ...req.body,
-      ano: req.body.ano ? parseInt(req.body.ano) : undefined,
+      ano: req.body.ano ? parseInt(req.body.ano, 10) : undefined,
       preco: req.body.preco ? parseFloat(req.body.preco) : undefined,
-      quilometragem: req.body.quilometragem ? parseInt(req.body.quilometragem) : undefined,
+      quilometragem: req.body.quilometragem ? parseInt(req.body.quilometragem, 10) : undefined,
     };
 
-    await veiculo.update(dadosAtualizados);
-    res.status(200).json(veiculo);
+    // Remover campo que não pertence ao modelo
+    delete dadosAtualizados.imagemUrl;
 
-    // REMOVIDO: imagemUrl dos dados
-    delete dados.imagemUrl;
-
-    await veiculo.update(dados, { transaction: t });
+    await veiculo.update(dadosAtualizados, { transaction: t });
     await t.commit();
-    
+
     // Buscar veículo atualizado com fotos
     const veiculoAtualizado = await Veiculo.findByPk(req.params.id, {
-      include: [{
-        model: VeiculoPhoto,
-        as: 'photos',
-        attributes: ['id', 'filename', 'content_type', 'size', 'created_at']
-      }]
+      include: [
+        {
+          model: VeiculoPhoto,
+          as: 'photos',
+          attributes: ['id', 'filename', 'content_type', 'size', 'created_at'],
+        },
+      ],
     });
-    
-    res.status(200).json(veiculoAtualizado);
+
+    return res.status(200).json(veiculoAtualizado);
   } catch (error) {
     await t.rollback();
     console.error('Erro ao atualizar veículo:', error);
     if (error.name === 'SequelizeUniqueConstraintError') {
       return res.status(400).json({ message: 'Placa já cadastrada' });
     }
-    res.status(500).json({ message: 'Erro ao atualizar veículo' });
+    return res.status(500).json({ message: 'Erro ao atualizar veículo' });
   }
 };
 
+// =============================
+// DELETE
+// =============================
 export const deleteVeiculo = async (req, res) => {
   if (req.user.role !== 'concessionaria') {
     return res.status(403).json({ message: 'Acesso negado' });
@@ -193,22 +185,23 @@ export const deleteVeiculo = async (req, res) => {
     const veiculo = await Veiculo.findByPk(req.params.id);
     if (!veiculo || veiculo.concessionaria_id !== req.user.concessionaria_id) {
       await t.rollback();
-      return res.status(403).json({ message: 'Veículo não encontrado' });
+      return res.status(403).json({ message: 'Veículo não encontrado ou não pertence à sua concessionária' });
     }
 
     // Deletar fotos associadas primeiro
     await VeiculoPhoto.destroy({
       where: { veiculo_id: req.params.id },
-      transaction: t
+      transaction: t,
     });
 
     await veiculo.destroy({ transaction: t });
     await t.commit();
-    
-    res.status(204).send();
+
+    return res.status(204).send();
   } catch (error) {
     await t.rollback();
-    res.status(500).json({ message: 'Erro ao deletar veículo' });
+    console.error('Erro ao deletar veículo:', error);
+    return res.status(500).json({ message: 'Erro ao deletar veículo' });
   }
 };
 
@@ -222,9 +215,7 @@ export const getCatalogoVeiculos = async (req, res) => {
 
   try {
     const veiculos = await Veiculo.findAll({
-      where: {
-        status: 'Disponível'
-      },
+      where: { status: 'Disponível' },
       include: [
         {
           model: Concessionaria,
@@ -234,16 +225,15 @@ export const getCatalogoVeiculos = async (req, res) => {
         {
           model: VeiculoPhoto,
           as: 'photos',
-          attributes: ['id', 'filename', 'content_type', 'size', 'created_at']
-        }
+          attributes: ['id', 'filename', 'content_type', 'size', 'created_at'],
+        },
       ],
       order: [['createdAt', 'DESC']],
     });
 
-    res.status(200).json(veiculos);
+    return res.status(200).json(veiculos);
   } catch (error) {
     console.error('Erro ao carregar catálogo:', error);
-    res.status(500).json({ message: 'Erro ao carregar catálogo' });
+    return res.status(500).json({ message: 'Erro ao carregar catálogo' });
   }
 };
-

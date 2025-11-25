@@ -1,6 +1,5 @@
 // server/src/routes/veiculoRoutes.js
 import express from 'express';
-import { 
 import {
   createVeiculo,
   getAllVeiculos,
@@ -21,6 +20,7 @@ router.use(authMiddleware);
 // Rotas do painel da concessionária
 router.post('/', createVeiculo);
 router.get('/estoque', getAllVeiculos);
+router.get('/:id', getVeiculo);
 router.put('/:id', updateVeiculo);
 router.delete('/:id', deleteVeiculo);
 
