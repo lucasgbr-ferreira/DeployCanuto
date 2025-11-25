@@ -6,6 +6,9 @@ import sequelize from '../config/database.js';
 // CRUD PRIVADO – SOMENTE CONCESSIONÁRIA
 // ========================================
 
+// =============================
+// CREATE
+// =============================
 export const createVeiculo = async (req, res) => {
   if (req.user.role !== 'concessionaria') {
     return res.status(403).json({ message: 'Acesso negado: Apenas concessionárias' });
@@ -13,6 +16,20 @@ export const createVeiculo = async (req, res) => {
 
   const t = await sequelize.transaction();
   try {
+    const dadosVeiculo = req.body;
+
+    // Campos obrigatórios
+    if (!dadosVeiculo.placa || !dadosVeiculo.modelo || !dadosVeiculo.marca) {
+      return res.status(400).json({
+        message: 'Placa, modelo e marca são obrigatórios'
+      });
+    }
+
+    // Formatar placa
+    if (dadosVeiculo.placa) {
+      dadosVeiculo.placa = dadosVeiculo.placa.toUpperCase().replace(/\s/g, '');
+    }
+
     const dados = req.body;
 
     if (!dados.placa || !dados.modelo || !dados.marca) {
@@ -37,6 +54,7 @@ export const createVeiculo = async (req, res) => {
     
     await t.commit();
     res.status(201).json(novoVeiculo);
+
   } catch (error) {
     await t.rollback();
     console.error('Erro ao criar veículo:', error);
@@ -67,7 +85,42 @@ export const getAllVeiculos = async (req, res) => {
       order: [['createdAt', 'DESC']],
     });
     res.status(200).json(veiculos);
+
   } catch (error) {
+    console.error('Erro ao buscar veículos:', error);
+    res.status(500).json({
+      message: "Erro ao buscar veículos"
+    });
+  }
+};
+
+// =============================
+// READ BY ID (NOVO)
+// =============================
+export const getVeiculo = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const veiculo = await Veiculo.findByPk(id);
+
+    if (!veiculo) {
+      return res.status(404).json({
+        message: "Veículo não encontrado"
+      });
+    }
+
+    res.status(200).json(veiculo);
+
+  } catch (error) {
+    console.error('Erro ao buscar veículo:', error);
+    res.status(500).json({
+      message: 'Erro ao buscar veículo'
+    });
+  }
+};
+
+// =============================
+// UPDATE
+// =============================
     console.error('Erro ao buscar estoque:', error);
     res.status(500).json({ message: 'Erro ao carregar estoque' });
   }
@@ -78,6 +131,10 @@ export const updateVeiculo = async (req, res) => {
     return res.status(403).json({ message: 'Acesso negado' });
   }
 
+    if (!veiculo) {
+      return res.status(404).json({
+        message: "Veículo não encontrado"
+      });
   const t = await sequelize.transaction();
   try {
     const veiculo = await Veiculo.findByPk(req.params.id);
@@ -96,6 +153,9 @@ export const updateVeiculo = async (req, res) => {
       preco: req.body.preco ? parseFloat(req.body.preco) : undefined,
       quilometragem: req.body.quilometragem ? parseInt(req.body.quilometragem) : undefined,
     };
+
+    await veiculo.update(dadosAtualizados);
+    res.status(200).json(veiculo);
 
     // REMOVIDO: imagemUrl dos dados
     delete dados.imagemUrl;

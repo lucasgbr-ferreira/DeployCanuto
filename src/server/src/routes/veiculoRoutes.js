@@ -1,8 +1,10 @@
 // server/src/routes/veiculoRoutes.js
 import express from 'express';
+import { 
 import {
   createVeiculo,
   getAllVeiculos,
+  getVeiculo,
   updateVeiculo,
   deleteVeiculo,
   getCatalogoVeiculos
@@ -10,6 +12,8 @@ import {
 import authMiddleware from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
+
+console.log('✅ Rotas de veículo carregadas');
 
 // TODAS as rotas abaixo exigem login
 router.use(authMiddleware);
