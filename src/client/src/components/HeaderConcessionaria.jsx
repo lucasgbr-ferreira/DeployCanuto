@@ -1,13 +1,14 @@
 import React from "react";
 import "../styles/landing.css";
+import Logo from "../assets/GesCar-Logo-removebg-preview.png";
 
-//
-export default function HeaderCliente() {
+// Header da Concessionária padronizado com o HeaderCliente
+export default function HeaderConcessionaria() {
   return (
     <header className="lp-header">
       <div className="lp-brand">
         <a href="/home_concessionaria">
-          <img src="{}" alt="logoconces" className="lp-logo" />
+          <img src={Logo} alt="GesCar" className="lp-logo" />
         </a>
       </div>
 

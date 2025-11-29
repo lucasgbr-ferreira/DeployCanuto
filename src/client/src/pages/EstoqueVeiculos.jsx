@@ -4,6 +4,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
+
+import HeaderConcessionaria from "../components/HeaderConcessionaria.jsx";
+import FooterConcessionaria from '../components/FooterConcessionaria.jsx'
+
 import axios from 'axios';
 import {
   CarFront,
@@ -654,49 +658,7 @@ export default function EstoqueVeiculos() {
     <main className="lp-root">
 
       {/* 1. Navbar (Menu Superior) */}
-      <nav className="lp-header">
-        <div className="lp-container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Link to="/" className="lp-brand">
-            <CarFront />
-            CanutoMotors
-          </Link>
-
-          {/* Menu Desktop */}
-          <div className="lp-nav">
-            {navLinks.map((link) => (
-              <Link key={link.name} to={link.href} className="nav-link">
-                {link.name}
-              </Link>
-            ))}
-            <ProfileDropdown />
-
-          </div>
-
-          {/* Botão Mobile */}
-          <div className="mobile-menu-btn" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-            {isMobileMenuOpen ? <X /> : <Menu />}
-          </div>
-        </div>
-
-        {/* Menu Mobile Dropdown */}
-        <AnimatePresence>
-          {isMobileMenuOpen && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              className="mobile-menu-dropdown"
-            >
-              {navLinks.map((link) => (
-                <Link key={link.name} to={link.href} className="nav-link">
-                  {link.name}
-                </Link>
-              ))}
-              <ProfileDropdown />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </nav>
+      <HeaderConcessionaria />
 
       {/* 2. Seção Hero (Dashboard) */}
       <motion.header
@@ -1101,11 +1063,7 @@ export default function EstoqueVeiculos() {
       </main>
 
       {/* 6. Footer */}
-      <footer className="lp-footer">
-        <div className="lp-container">
-          <small>© {new Date().getFullYear()} CanutoMotors — Todos os direitos reservados.</small>
-        </div>
-      </footer>
+      <FooterConcessionaria />
 
       {/* Modais */}
       <LoginModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
