@@ -1,7 +1,18 @@
+# Aliviar upload e manter build limpo
 node_modules
 npm-debug.log
+yarn-error.log
+pnpm-debug.log
+
+# Evitar envio de segredos
 .env
-*.md
-Dockerfile
+
+# Ignorar repositório git
 .git
-../client
+.gitignore
+
+# Ignorar logs
+*.log
+
+# Não ignore o Dockerfile do backend!
+# (permitir que o Render o use corretamente)

@@ -8,17 +8,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Diretório da aplicação
 WORKDIR /usr/src/app
 
-# Copiar apenas arquivos necessários para instalar dependências
+# Copiar apenas package.json e package-lock.json
 COPY package*.json ./
 
-# Instalar apenas dependências de produção
+# Instalar dependências
 RUN npm ci --production
 
-# Copiar restante dos arquivos do servidor
+# Copiar TODO o servidor
 COPY . .
 
 # Expor porta usada pelo backend
 EXPOSE 3000
 
-# Comando de inicialização
-CMD ["node", "./src/app.js"]
+# Comando de inicialização (CORRIGIDO)
+CMD ["node", "/usr/src/app/src/app.js"]
