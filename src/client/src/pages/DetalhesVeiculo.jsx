@@ -7,6 +7,8 @@ import { CarFront } from "lucide-react";
 import "../styles/landing.css";
 import "../styles/detalhes.css";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 function useVeiculoId() {
   const { id: routeId } = useParams();
   const location = useLocation();
@@ -40,7 +42,7 @@ export default function DetalhesVeiculo() {
         setError(null);
 
         const res = await axios.get(
-          `http://localhost:3000/api/veiculos/${veiculoId}`
+          `${API_BASE_URL}/api/veiculos/${veiculoId}`
         );
 
         setVeiculo(res.data);

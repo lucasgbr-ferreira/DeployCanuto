@@ -5,9 +5,7 @@ import Header from "../components/HeaderPerfil";
 import Footer from "../components/Footer";
 import { useNavigate } from "react-router-dom";
 
-const API_BASE_URL =
-  (typeof import.meta !== "undefined" && import.meta.env?.VITE_API_BASE_URL) ||
-  "http://localhost:3000";
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 export default function PerfilCliente() {
   const navigate = useNavigate();
@@ -38,7 +36,7 @@ export default function PerfilCliente() {
     return raw ? JSON.parse(raw) : null;
   });
 
-  const userId = localUser?.id || null; 
+  const userId = localUser?.id || null;
 
   useEffect(() => {
     async function carregar() {
@@ -306,7 +304,7 @@ export default function PerfilCliente() {
                 value={formData.telefone}
                 readOnly={!isEditing}
                 onChange={handleChange}
-                style={{ width: "100%", padding:10, margin:"8px 0 12px", borderRadius:8, background:"transparent", border:"1px solid var(--border)", color:"var(--text)" }}
+                style={{ width: "100%", padding: 10, margin: "8px 0 12px", borderRadius: 8, background: "transparent", border: "1px solid var(--border)", color: "var(--text)" }}
               />
 
               <label style={{ color: "var(--muted)", fontSize: 13 }}>CPF</label>
@@ -316,7 +314,7 @@ export default function PerfilCliente() {
                 value={formData.cpf}
                 readOnly={!isEditing}
                 onChange={handleChange}
-                style={{ width: "100%", padding:10, margin:"8px 0 12px", borderRadius:8, background:"transparent", border:"1px solid var(--border)", color:"var(--text)" }}
+                style={{ width: "100%", padding: 10, margin: "8px 0 12px", borderRadius: 8, background: "transparent", border: "1px solid var(--border)", color: "var(--text)" }}
               />
 
               <label style={{ color: "var(--muted)", fontSize: 13 }}>Endereço</label>
@@ -326,7 +324,7 @@ export default function PerfilCliente() {
                 value={formData.endereco}
                 readOnly={!isEditing}
                 onChange={handleChange}
-                style={{ width: "100%", padding:10, margin:"8px 0 12px", borderRadius:8, background:"transparent", border:"1px solid var(--border)", color:"var(--text)" }}
+                style={{ width: "100%", padding: 10, margin: "8px 0 12px", borderRadius: 8, background: "transparent", border: "1px solid var(--border)", color: "var(--text)" }}
               />
 
               <label style={{ color: "var(--muted)", fontSize: 13 }}>Nova Senha</label>
@@ -336,7 +334,7 @@ export default function PerfilCliente() {
                 value={formData.newPassword}
                 readOnly={!isEditing}
                 onChange={handleChange}
-                style={{ width: "100%", padding:10, margin:"8px 0 16px", borderRadius:8, background:"transparent", border:"1px solid var(--border)", color:"var(--text)" }}
+                style={{ width: "100%", padding: 10, margin: "8px 0 16px", borderRadius: 8, background: "transparent", border: "1px solid var(--border)", color: "var(--text)" }}
               />
 
               <div style={{ display: "flex", gap: 12, alignItems: "center", marginTop: 6 }}>

@@ -7,6 +7,8 @@ import { CarFront, Mail, Phone, MapPin, Users } from "lucide-react";
 import "../styles/landing.css";
 import "../styles/sobre.css";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL;
+
 function useConcessionariaId() {
   const { id: routeId } = useParams();
   const location = useLocation();
@@ -30,9 +32,7 @@ export default function SobreConcessionaria() {
       try {
         setIsLoading(true);
         setError(null);
-        const res = await axios.get(
-          `http://localhost:3000/api/concessionarias/${concessionariaId}`
-        );
+        const res = await axios.get(`${API_BASE_URL}/api/concessionarias/${concessionariaId}`);
         setConcessionaria(res.data);
       } catch (err) {
         console.error("Erro ao carregar concessionária:", err);
