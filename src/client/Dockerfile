@@ -1,13 +1,15 @@
-FROM node:20-alpine
+# Etapa 1 — Build do Vite
+FROM node:20-alpine as builder
 
-WORKDIR /usr/src/app
-
+WORKDIR /app
 COPY package*.json ./
-
-RUN npm ci --silent
-
+RUN npm install
 COPY . .
+RUN npm run build
 
-EXPOSE 5173
+# Etapa 2 — Servir via Nginx
+FROM nginx:alpine
+COPY --from=builder /app/dist /usr/share/nginx/html
 
-CMD ["npm", "run", "dev"]
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
