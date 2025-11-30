@@ -16,19 +16,15 @@ import veiculoPhotoRoutes from './routes/veiculoPhotoRoutes.js';
 const app = express();
 
 // Origem permitida (domínio do frontend no Render)
-const allowedOrigin = process.env.FRONTEND_URL;
-
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      if (!origin) return callback(null, true); // mobile, Postman, curl etc.
-      if (origin === allowedOrigin) return callback(null, true);
-      console.error("❌ CORS blocked:", origin);
-      return callback(new Error(`CORS not allowed for ${origin}`), false);
-    },
-    credentials: true,
-  })
-);
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || origin === allowedOrigin) {
+      return callback(null, true);
+    }
+    return callback(new Error(`CORS not allowed for ${origin}`), false);
+  },
+  credentials: true
+}));
 
 // headers extras
 app.use((req, res, next) => {
