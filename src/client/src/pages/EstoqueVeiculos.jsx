@@ -40,6 +40,8 @@ import {
   Search
 } from 'lucide-react';
 
+import { Toaster, toast } from "sonner";
+
 import "../styles/landing.css";
 import "../styles/stock.css";
 
@@ -360,10 +362,10 @@ export default function EstoqueVeiculos() {
         prevVeiculos.filter(veiculo => veiculo.id !== veiculoId)
       );
 
-      alert('Veículo excluído com sucesso!');
+      toast.success("Veículo excluído com sucesso!");
     } catch (error) {
       console.error('Erro ao excluir veículo:', error);
-      alert('Erro ao excluir veículo. Tente novamente.');
+      toast.error("Erro ao excluir veículo. Tente novamente.");
     }
   };
 
@@ -416,7 +418,7 @@ export default function EstoqueVeiculos() {
       return response.data.photo;
     } catch (error) {
       console.error('Erro no upload da imagem:', error);
-      alert('Erro ao fazer upload da imagem. Tente novamente.');
+      toast.error("Erro ao fazer upload da imagem. Tente novamente.");
       return null;
     } finally {
       setIsUploading(false);
@@ -429,13 +431,13 @@ export default function EstoqueVeiculos() {
     if (file) {
       // Validar tipo de arquivo
       if (!file.type.startsWith('image/')) {
-        alert('Por favor, selecione apenas arquivos de imagem.');
+        toast.warning("Por favor, selecione apenas arquivos de imagem.");
         return;
       }
 
       // Validar tamanho do arquivo (2MB)
       if (file.size > 2 * 1024 * 1024) {
-        alert('A imagem deve ter no máximo 2MB.');
+        toast.warning("A imagem deve ter no máximo 2MB.");
         return;
       }
 
@@ -455,11 +457,11 @@ export default function EstoqueVeiculos() {
     const file = e.target.files[0];
     if (file) {
       if (!file.type.startsWith('image/')) {
-        alert('Por favor, selecione apenas arquivos de imagem.');
+        toast.warning("Por favor, selecione apenas arquivos de imagem.");
         return;
       }
       if (file.size > 2 * 1024 * 1024) {
-        alert('A imagem deve ter no máximo 2MB.');
+        toast.warning("A imagem deve ter no máximo 2MB.");
         return;
       }
 
@@ -497,7 +499,7 @@ export default function EstoqueVeiculos() {
     });
 
     if (hasErrors) {
-      alert('Por favor, corrija os erros antes de salvar.');
+      toast.warning("Por favor, corrija os erros antes de salvar");
       return;
     }
 
@@ -524,13 +526,13 @@ export default function EstoqueVeiculos() {
       setEditErrors({});
       setEditSelectedFile(null);
       setEditPreviewUrl('');
-      alert('Veículo atualizado com sucesso!');
+      toast.success("Veículo atualizado com sucesso!");
     } catch (error) {
       console.error('Erro ao atualizar veículo:', error);
       if (error.response?.data?.errors) {
-        alert(`Erro de validação: ${error.response.data.errors.join(', ')}`);
+        toast.error(`Erro de validação: ${error.response.data.errors.join(", ")}`);
       } else {
-        alert('Erro ao atualizar veículo. Tente novamente.');
+        toast.error("Erro ao atualizar veículo");
       }
     }
   };
@@ -584,7 +586,7 @@ export default function EstoqueVeiculos() {
     setFormErrors(errors);
 
     if (!isValid) {
-      alert('Por favor, corrija os erros no formulário antes de enviar.');
+      toast.warning("Corrija os erros no formulário antes de salvar");
       return;
     }
 
@@ -653,7 +655,7 @@ export default function EstoqueVeiculos() {
         (error.response.data.errors ? error.response.data.errors.join(', ') : error.response.data.message)
         : error.message;
       console.error('Erro ao cadastrar:', errorMessage);
-      alert(`Erro ao cadastrar veículo: ${errorMessage}`);
+      toast.error(`Erro ao cadastrar veículo: ${errorMessage}`);
     } finally {
       setIsSubmitting(false);
     }

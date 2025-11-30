@@ -19,6 +19,8 @@ import {
     Search,
 } from 'lucide-react';
 
+import { Toaster, toast } from "sonner";
+
 import EditarLaudoModal from '../components/EditarLaudoModal';
 import '../styles/landing.css';
 import '../styles/stock.css';
@@ -186,7 +188,7 @@ export default function VeiculosManutencao() {
                 setIsModalOpen(false);
                 setVeiculoSelecionado(null);
 
-                alert('Laudo técnico salvo e veículo disponibilizado para venda com sucesso!');
+                toast.success("Laudo técnico salvo e veículo disponibilizado para venda com sucesso!");
                 return;
             }
 
@@ -207,7 +209,7 @@ export default function VeiculosManutencao() {
             setIsModalOpen(false);
             setVeiculoSelecionado(null);
 
-            alert('Laudo técnico salvo e veículo disponibilizado para venda com sucesso!');
+            toast.success("Laudo técnico salvo e veículo disponibilizado para venda com sucesso!");
         } catch (err) {
             console.error('Erro ao atualizar laudo técnico:', err);
             if (err.response?.data?.errors) {
