@@ -1,41 +1,36 @@
-// app.js
-import 'dotenv/config'; 
-import express from 'express';  
+import 'dotenv/config';
+import express from 'express';
 import cors from 'cors';
 import sequelize from './config/database.js';
 import './models/index.js';
 
 import authRoutes from './routes/authRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
-import imageGetRoutes from './routes/imageGetRoutes.js'; 
-import concessionariaRoutes from './routes/concessionariaRoutes.js'; 
+import imageGetRoutes from './routes/imageGetRoutes.js';
+import concessionariaRoutes from './routes/concessionariaRoutes.js';
 import clientRoutes from './routes/clientRoutes.js';
-import veiculoRoutes from './routes/veiculoRoutes.js'; 
+import veiculoRoutes from './routes/veiculoRoutes.js';
 import profilePhotoRoutes from './routes/profilePhotoRoutes.js';
-import veiculoPhotoRoutes from './routes/veiculoPhotoRoutes.js'; 
+import veiculoPhotoRoutes from './routes/veiculoPhotoRoutes.js';
 
 const app = express();
 
+const allowedOrigin = process.env.FRONTEND_URL;
 
-const allowedOrigins = [
-  'http://localhost:5173', 
-  'http://localhost:5174' 
-];
-// --- CORS atualizado para permitir Authorization ---
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-    return callback(new Error(`CORS not allowed for ${origin}`), false);
-  },
-  credentials: true
-}));
+// CORS CORRETO
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true
+  })
+);
 
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
   next();
 });
 
@@ -60,15 +55,13 @@ const start = async () => {
   try {
     await sequelize.authenticate();
     console.log('✅ DB connection ok');
-    
-    // Sincronizar modelos sem forçar a recriação das tabelas
+
     await sequelize.sync();
     console.log('✅ Models synced safely - existing data preserved');
-    
     console.log('✅ Setup inicial concluído');
 
     app.listen(PORT, () => {
-      console.log(`🚀 Server listening on http://localhost:${PORT}`);
+      console.log(`🚀 Server running on port ${PORT}`);
     });
   } catch (err) {
     console.error('❌ Unable to start server:', err);

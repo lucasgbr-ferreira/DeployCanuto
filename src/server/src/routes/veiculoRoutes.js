@@ -14,22 +14,22 @@ const router = express.Router();
 
 console.log('✅ Rotas de veículo carregadas');
 
-// TODAS as rotas abaixo exigem login
+// Middleware: todas as rotas exigem login
 router.use(authMiddleware);
 
 // ===============================
-// ROTA DO CATÁLOGO – TEM QUE VIR PRIMEIRO
+// ROTAS DO CATÁLOGO (CLIENTES / CONCESSIONÁRIA / ADMIN)
 // ===============================
 router.get('/catalogo', getCatalogoVeiculos);
 
 // ===============================
-// ROTAS DO PAINEL DA CONCESSIONÁRIA
+// ROTAS DA CONCESSIONÁRIA
 // ===============================
 router.post('/', createVeiculo);
 router.get('/estoque', getAllVeiculos);
 
 // ===============================
-// ROTAS DINÂMICAS — SEMPRE VÃO POR ÚLTIMO
+// ROTAS POR ID (sempre por último)
 // ===============================
 router.get('/:id', getVeiculo);
 router.put('/:id', updateVeiculo);
