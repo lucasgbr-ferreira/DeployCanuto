@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import sequelize from './config/database.js';
@@ -14,19 +15,22 @@ import veiculoPhotoRoutes from './routes/veiculoPhotoRoutes.js';
 
 const app = express();
 
-// Origem permitida (definida por variável de ambiente)
+// Origem permitida (domínio do frontend no Render)
 const allowedOrigin = process.env.FRONTEND_URL;
 
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || origin === allowedOrigin) {
-      return callback(null, true);
-    }
-    return callback(new Error(`CORS not allowed for ${origin}`), false);
-  },
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true); // mobile, Postman, curl etc.
+      if (origin === allowedOrigin) return callback(null, true);
+      console.error("❌ CORS blocked:", origin);
+      return callback(new Error(`CORS not allowed for ${origin}`), false);
+    },
+    credentials: true,
+  })
+);
 
+// headers extras
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Credentials', 'true');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
@@ -54,12 +58,13 @@ const start = async () => {
   try {
     await sequelize.authenticate();
     console.log('✅ DB connection ok');
+
     await sequelize.sync();
     console.log('✅ Models synced safely - existing data preserved');
     console.log('✅ Setup inicial concluído');
 
     app.listen(PORT, () => {
-      console.log(`🚀 Server listening on http://localhost:${PORT}`);
+      console.log(`🚀 Server running on port ${PORT}`);
     });
   } catch (err) {
     console.error('❌ Unable to start server:', err);
