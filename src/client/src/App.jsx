@@ -11,6 +11,7 @@ import DetalhesVeiculo from "./pages/DetalhesVeiculo";
 import HomeConcessionaria from "./pages/HomeConcessionaria.jsx"
 import HistoricoCliente from "./pages/HistoricoCliente.jsx"
 import AgendaCliente from "./pages/AgendamentoCliente.jsx"
+import VeiculosManutencao from './pages/VeiculosManutencao';
 
 
 const FallbackRegister = () => (
@@ -72,6 +73,7 @@ export default function App() {
       <Route path="/sobre" element={<SobreConcessionaria />} />
       <Route path="/sobre/:id" element={<SobreConcessionaria />} />
       <Route path="/detalhes/:id" element={<DetalhesVeiculo />} />
+      <Route path="/dashboard/manutencao" element={<VeiculosManutencao />} />
 
       <Route path="*" element={<LandingPage />} />
     </Routes>

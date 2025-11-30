@@ -1,9 +1,10 @@
 // client/src/pages/EstoqueVeiculos.jsx
 
 // --- Imports ---
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
+
 
 import HeaderConcessionaria from "../components/HeaderConcessionaria.jsx";
 import FooterConcessionaria from '../components/FooterConcessionaria.jsx'
@@ -17,7 +18,6 @@ import {
   Menu,
   X,
   Car,
-  CheckSquare,
   Wrench,
   ArrowRight,
   Edit,
@@ -36,7 +36,8 @@ import {
   ClipboardList,
   ShoppingCart,
   CreditCard,
-  ShieldCheck
+  ShieldCheck,
+  Search
 } from 'lucide-react';
 
 import "../styles/landing.css";
@@ -278,6 +279,7 @@ export default function EstoqueVeiculos() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState('');
   const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef(null);
 
   // --- LÓGICA DO MODAL DE VEÍCULOS ---
   const [isVeiculoModalOpen, setIsVeiculoModalOpen] = useState(false);
@@ -306,7 +308,7 @@ export default function EstoqueVeiculos() {
     }
   }, [navigate, token, user]);
 
-  // Função para buscar veículos'
+  // Função para buscar veículos disponíveis
   const fetchVeiculos = async () => {
     setIsLoading(true);
     setError(null);
@@ -314,10 +316,14 @@ export default function EstoqueVeiculos() {
       const response = await axios.get(`${API_BASE_URL}/api/veiculos/estoque`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setVeiculos(response.data);
+      // Filtrar apenas veículos com status "Disponível"
+      const veiculosDisponiveis = response.data.filter(
+        veiculo => veiculo.status === 'Disponível'
+      );
+      setVeiculos(veiculosDisponiveis);
     } catch (err) {
       console.error("Erro ao buscar veículos:", err);
-      setError("Não foi possível carregar os veículos.");
+      setError("Não foi possível carregar os veículos disponíveis.");
       setVeiculos([]);
     } finally {
       setIsLoading(false);
@@ -630,6 +636,11 @@ export default function EstoqueVeiculos() {
       setSelectedFile(null);
       setPreviewUrl('');
 
+      // Resetar o input de arquivo
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+
       // Atualiza a lista de veículos se o modal estiver aberto
       if (isVeiculoModalOpen) {
         fetchVeiculos();
@@ -731,17 +742,9 @@ export default function EstoqueVeiculos() {
           <FeatureCard
             icon={<Car size={20} />}
             title="Veículos disponíveis para venda"
-            line1="Confira os detalhes de cada veículo do estoque."
+            line1="Confira os veículos prontos para comercialização."
             linkText="Visualizar Veículos"
             onClick={handleOpenVeiculoModal}
-            accentFrom="#565656ff"
-            accentTo="#bd07d8ff"
-          />
-          <FeatureCard
-            icon={<CheckSquare size={20} />}
-            title="Veículos vendidos"
-            line1="Histórico de vendas concluídas."
-            linkText="Ver Relatório"
             accentFrom="#565656ff"
             accentTo="#bd07d8ff"
           />
@@ -750,6 +753,7 @@ export default function EstoqueVeiculos() {
             title="Veículos em manutenção"
             line1="Acompanhe veículos temporariamente indisponíveis."
             linkText="Gerenciar"
+            onClick={() => navigate('/dashboard/manutencao')}
             accentFrom="#565656ff"
             accentTo="#bd07d8ff"
           />
@@ -946,7 +950,7 @@ export default function EstoqueVeiculos() {
                 >
                   <option value="Disponível">Disponível</option>
                   <option value="Vendido" disabled>Vendido</option>
-                  <option value="Em Manutenção" disabled>Em Manutenção</option>
+                  <option value="Em Manutenção">Em Manutenção</option>
                 </select>
               </div>
             </div>
@@ -962,6 +966,7 @@ export default function EstoqueVeiculos() {
                   accept="image/jpeg,image/png,image/jpg,image/webp"
                   onChange={handleFileChange}
                   className="file-input"
+                  ref={fileInputRef}
                 />
                 {previewUrl && (
                   <div className="image-preview-container">
@@ -1148,6 +1153,19 @@ function VeiculoListModal({
   editPreviewUrl,
   setEditPreviewUrl
 }) {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // Filtrar veículos por busca
+  const filteredVeiculos = useMemo(() => {
+    if (!searchTerm.trim()) return veiculos;
+    const term = searchTerm.toLowerCase();
+    return veiculos.filter(v =>
+      v.marca?.toLowerCase().includes(term) ||
+      v.modelo?.toLowerCase().includes(term) ||
+      v.placa?.toLowerCase().includes(term)
+    );
+  }, [veiculos, searchTerm]);
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -1175,6 +1193,36 @@ function VeiculoListModal({
             </div>
 
             <div className="modal-body">
+              {/* Campo de Busca */}
+              {!isEditMode && (
+                <div className="search-container modal-search">
+                  <div className="search-input-wrapper">
+                    <Search size={18} className="search-icon" />
+                    <input
+                      type="text"
+                      placeholder="Buscar por placa, marca ou modelo..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="search-input"
+                    />
+                    {searchTerm && (
+                      <button
+                        className="search-clear"
+                        onClick={() => setSearchTerm('')}
+                        type="button"
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </div>
+                  {searchTerm && (
+                    <p className="search-results-count">
+                      {filteredVeiculos.length} veículo(s) encontrado(s)
+                    </p>
+                  )}
+                </div>
+              )}
+
               {isLoading && (
                 <div className="loading-state">
                   <div className="loading-spinner"></div>
@@ -1190,13 +1238,13 @@ function VeiculoListModal({
 
               {!isLoading && !error && (
                 <div className="veiculo-list">
-                  {veiculos.length === 0 ? (
+                  {filteredVeiculos.length === 0 ? (
                     <div className="empty-state">
                       <div className="empty-state-icon">🚗</div>
-                      <p>Nenhum veículo cadastrado no momento.</p>
+                      <p>{searchTerm ? 'Nenhum veículo encontrado.' : 'Nenhum veículo disponível no momento.'}</p>
                     </div>
                   ) : (
-                    veiculos.map(veiculo => (
+                    filteredVeiculos.map(veiculo => (
                       <VeiculoCard
                         key={veiculo.id}
                         veiculo={veiculo}
