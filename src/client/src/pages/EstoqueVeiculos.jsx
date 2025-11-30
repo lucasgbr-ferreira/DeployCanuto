@@ -949,7 +949,6 @@ export default function EstoqueVeiculos() {
                   onChange={handleChange}
                 >
                   <option value="Disponível">Disponível</option>
-                  <option value="Vendido" disabled>Vendido</option>
                   <option value="Em Manutenção">Em Manutenção</option>
                 </select>
               </div>
