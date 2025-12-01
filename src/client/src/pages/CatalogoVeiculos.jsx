@@ -1,7 +1,11 @@
 // client/src/pages/CatalogoVeiculos.jsx
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
+
+import HeaderCliente from "../components/HeaderCliente";
+import Footer from "../components/Footer";
+
 import axios from 'axios';
 import {
   CarFront,
@@ -23,7 +27,8 @@ import {
   ChevronUp,
   Building,
   Phone,
-  Mail
+  Mail,
+  Search
 } from 'lucide-react';
 
 import "../styles/landing.css";
@@ -143,28 +148,109 @@ export default function CatalogoVeiculos() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [veiculos, setVeiculos] = useState([]);
-  const [filteredVeiculos, setFilteredVeiculos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
 
-  // Buscar veículos do catálogo
+  // 1. PRIMEIRO: useMemo para filteredVeiculos
+  const filteredVeiculos = useMemo(() => {
+    console.log('DEBUG - Filtrando veículos:', {
+      searchTerm,
+      veiculosCount: veiculos.length
+    });
+
+    if (!searchTerm || !searchTerm.trim()) {
+      console.log('DEBUG - Retornando todos os veículos:', veiculos.length);
+      return veiculos;
+    }
+
+    const term = searchTerm.toLowerCase().trim();
+    const filtered = veiculos.filter(v => {
+      const matches =
+        v.marca?.toLowerCase().includes(term) ||
+        v.modelo?.toLowerCase().includes(term) ||
+        v.placa?.toLowerCase().includes(term);
+
+      return matches;
+    });
+
+    console.log('DEBUG - Veículos filtrados:', filtered.length);
+    return filtered;
+  }, [veiculos, searchTerm]);
+
+  // 2. DEPOIS: useEffect que depende de filteredVeiculos
+  useEffect(() => {
+    console.log('DEBUG - Estado atual:', {
+      veiculosCount: veiculos.length,
+      searchTerm,
+      filteredCount: filteredVeiculos.length,
+      isLoading,
+      error
+    });
+  }, [veiculos, searchTerm, filteredVeiculos, isLoading, error]);
+
+  // 3. Buscar veículos do catálogo
   useEffect(() => {
     const fetchVeiculos = async () => {
       try {
         setIsLoading(true);
         setError(null);
+        console.log('DEBUG - Iniciando busca de veículos...');
 
-        // Pega o token do localStorage
         const token = localStorage.getItem('token');
-        const user = localStorage.getItem('user');
-
-        console.log('Token:', token);
-        console.log('User:', user);
 
         if (!token) {
-          setError('Você precisa estar logado para ver o catálogo.');
-          setIsLoading(false);
+          console.log('DEBUG - Modo demo (sem token)');
+          setTimeout(() => {
+            const mockVeiculos = [
+              {
+                id: 1,
+                marca: 'Honda',
+                modelo: 'Civic EXL',
+                placa: 'ABC-1234',
+                ano: 2023,
+                quilometragem: 15000,
+                cor: 'Prata',
+                combustivel: 'Flex',
+                cambio: 'Automático',
+                preco: 145000,
+                status: 'Disponível',
+                concessionaria: { nome: 'AutoCar Premium' }
+              },
+              {
+                id: 2,
+                marca: 'Toyota',
+                modelo: 'Corolla XEI',
+                placa: 'XYZ-5678',
+                ano: 2022,
+                quilometragem: 28000,
+                cor: 'Branco',
+                combustivel: 'Híbrido',
+                cambio: 'Automático',
+                preco: 158000,
+                status: 'Disponível',
+                concessionaria: { nome: 'AutoCar Premium' }
+              },
+              {
+                id: 3,
+                marca: 'Volkswagen',
+                modelo: 'Golf GTI',
+                placa: 'DEF-9012',
+                ano: 2021,
+                quilometragem: 35000,
+                cor: 'Vermelho',
+                combustivel: 'Gasolina',
+                cambio: 'Manual',
+                preco: 125000,
+                status: 'Disponível',
+                concessionaria: { nome: 'AutoCar Premium' }
+              },
+            ];
+            console.log('DEBUG - Mock veículos definidos:', mockVeiculos.length);
+            setVeiculos(mockVeiculos);
+            setIsLoading(false);
+          }, 500);
           return;
         }
 
@@ -175,9 +261,7 @@ export default function CatalogoVeiculos() {
           }
         });
 
-        console.log('Resposta da API:', response.data);
-
-        // Processar os veículos
+        console.log('DEBUG - Resposta da API:', response.data.length);
         const veiculosProcessados = response.data.map(veiculo => ({
           ...veiculo,
           concessionariaNome: veiculo.concessionaria?.nome || 'Concessionária não informada',
@@ -187,16 +271,13 @@ export default function CatalogoVeiculos() {
         }));
 
         setVeiculos(veiculosProcessados);
-        setFilteredVeiculos(veiculosProcessados);
 
       } catch (err) {
-        console.error("Erro completo ao buscar veículos:", err);
-
+        console.error("DEBUG - Erro ao buscar veículos:", err);
         if (err.response?.status === 401) {
           setError('Sua sessão expirou. Faça login novamente.');
           localStorage.removeItem('token');
           localStorage.removeItem('user');
-          navigate('/login');
         } else if (err.response?.status === 403) {
           setError('Acesso negado. Verifique suas permissões.');
         } else if (err.response?.status === 404) {
@@ -208,11 +289,13 @@ export default function CatalogoVeiculos() {
         }
       } finally {
         setIsLoading(false);
+        console.log('DEBUG - Busca finalizada, isLoading:', false);
       }
     };
 
     fetchVeiculos();
-  }, [navigate]);
+  }, []);
+
 
   // Função para tentar novamente
   const handleRetry = () => {
@@ -249,50 +332,7 @@ export default function CatalogoVeiculos() {
 
   return (
     <main className="lp-root">
-
-      {/* 1. Navbar (Menu Superior) */}
-      <nav className="lp-header">
-        <div className="lp-container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Link to="/" className="lp-brand">
-            <CarFront />
-            CanutoMotors
-          </Link>
-
-          {/* Menu Desktop */}
-          <div className="lp-nav">
-            {navLinks.map((link) => (
-              <Link key={link.name} to={link.href} className="nav-link">
-                {link.name}
-              </Link>
-            ))}
-            <ProfileDropdown />
-          </div>
-
-          {/* Botão Mobile */}
-          <div className="mobile-menu-btn" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-            {isMobileMenuOpen ? <X /> : <Menu />}
-          </div>
-        </div>
-
-        {/* Menu Mobile Dropdown */}
-        <AnimatePresence>
-          {isMobileMenuOpen && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              className="mobile-menu-dropdown"
-            >
-              {navLinks.map((link) => (
-                <Link key={link.name} to={link.href} className="nav-link">
-                  {link.name}
-                </Link>
-              ))}
-              <ProfileDropdown />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </nav>
+      <HeaderCliente />
 
       {/* 2. Seção Hero */}
       <motion.header
@@ -334,8 +374,45 @@ export default function CatalogoVeiculos() {
         </div>
       </motion.section>
 
-      {/* 4. Seção Grid */}
+      {/* SEÇÃO GRID - CORREÇÃO APLICADA */}
       <main className="lp-container" style={{ paddingBottom: '72px', paddingTop: '36px' }}>
+        {/* Campo de Busca - SEMPRE VISÍVEL QUANDO HÁ VEÍCULOS */}
+        {!isLoading && !error && veiculos.length > 0 && (
+          <div className="search-container catalog-search">
+            <div className="search-input-wrapper">
+              <Search size={20} className="search-icon" />
+              <input
+                type="text"
+                placeholder="Buscar por placa, marca ou modelo..."
+                value={searchTerm}
+                onChange={(e) => {
+                  console.log('DEBUG - Search term alterado:', e.target.value);
+                  setSearchTerm(e.target.value);
+                }}
+                className="search-input"
+              />
+              {searchTerm && (
+                <button
+                  className="search-clear"
+                  onClick={() => {
+                    console.log('DEBUG - Limpando busca');
+                    setSearchTerm('');
+                  }}
+                  type="button"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+            {searchTerm && (
+              <p className="search-results-count">
+                {filteredVeiculos.length} veículo(s) encontrado(s) de {veiculos.length} no total
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* CORREÇÃO: Lógica de renderização simplificada e mais robusta */}
         {isLoading ? (
           <div className="catalog-loading">
             <div className="loading-spinner"></div>
@@ -353,42 +430,52 @@ export default function CatalogoVeiculos() {
               </button>
             </div>
           </div>
-        ) : veiculos.length === 0 ? (
-          <div className="catalog-empty">
-            <div className="catalog-empty-icon">🚗</div>
-            <h3>Nenhum veículo cadastrado</h3>
-            <p>Volte mais tarde para ver nossos veículos disponíveis.</p>
-            <Link to="/dashboard/estoque" className="btn primary" style={{ marginTop: '16px' }}>
-              Gerenciar Estoque
-            </Link>
-          </div>
         ) : (
-          <motion.div
-            className="catalog-grid"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.1 }}
-            variants={staggerContainer}
-          >
-            {veiculos.map(vehicle => (
-              <VehicleCard
-                key={vehicle.id}
-                vehicle={vehicle}
-                formatPrice={formatPrice}
-                formatKm={formatKm}
-              />
-            ))}
-          </motion.div>
+          // CORREÇÃO: Container único para todos os estados de conteúdo
+          <div className="catalog-content">
+            {veiculos.length === 0 ? (
+              <div className="catalog-empty">
+                <div className="catalog-empty-icon">🚗</div>
+                <h3>Nenhum veículo cadastrado</h3>
+                <p>Volte mais tarde para ver nossos veículos disponíveis.</p>
+                <Link to="/dashboard/estoque" className="btn primary" style={{ marginTop: '16px' }}>
+                  Gerenciar Estoque
+                </Link>
+              </div>
+            ) : filteredVeiculos.length === 0 ? (
+              <div className="catalog-empty">
+                <div className="catalog-empty-icon">🔍</div>
+                <h3>Nenhum veículo encontrado</h3>
+                <p>{searchTerm ? 'Tente buscar por outro termo.' : 'Não há veículos para exibir.'}</p>
+                {searchTerm && (
+                  <button onClick={() => setSearchTerm('')} className="btn ghost" style={{ marginTop: '16px' }}>
+                    Limpar Busca
+                  </button>
+                )}
+              </div>
+            ) : (
+              <motion.div
+                className="catalog-grid"
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.1 }}
+                variants={staggerContainer}
+              >
+                {filteredVeiculos.map(vehicle => (
+                  <VehicleCard
+                    key={vehicle.id}
+                    vehicle={vehicle}
+                    formatPrice={formatPrice}
+                    formatKm={formatKm}
+                  />
+                ))}
+              </motion.div>
+            )}
+          </div>
         )}
       </main>
 
-      {/* 5. Footer */}
-      <footer className="lp-footer">
-        <div className="lp-container">
-          <small>© {new Date().getFullYear()} CanutoMotors — Todos os direitos reservados.</small>
-        </div>
-      </footer>
-
+      <Footer />
       <LoginModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </main>
   );

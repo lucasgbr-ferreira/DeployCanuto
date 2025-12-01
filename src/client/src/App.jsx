@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
+import { Toaster, toast } from "sonner";
 
 import LandingPage from "./pages/LandingPage";
 import CatalogoVeiculos from "./pages/CatalogoVeiculos";
@@ -11,6 +12,7 @@ import DetalhesVeiculo from "./pages/DetalhesVeiculo";
 import HomeConcessionaria from "./pages/HomeConcessionaria.jsx"
 import HistoricoCliente from "./pages/HistoricoCliente.jsx"
 import AgendaCliente from "./pages/AgendamentoCliente.jsx"
+import VeiculosManutencao from './pages/VeiculosManutencao';
 
 
 const FallbackRegister = () => (
@@ -46,34 +48,34 @@ export default function App() {
   }, []);
 
   return (
-    <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/landing" element={<LandingPage />} />
-      <Route
-        path="/register"
-        element={RegisterComp ? <RegisterComp /> : <FallbackRegister />}
-      />
-      <Route
-        path="/login"
-        element={LoginComp ? <LoginComp /> : <FallbackLogin />}
-      />
-      <Route path="/catalog" element={<CatalogoVeiculos />} />
-      <Route path="/cliente/catalogo" element={<div style={{ textAlign: 'center', marginTop: 80 }}>Página de Catálogo de Veículos</div>} />
-      <Route path="/home_cliente" element={<HomeCliente />} />
-      <Route path="/cliente/buscar" element={<div style={{ textAlign: 'center', marginTop: 80 }}>Página de Buscar Veículos</div>} />
-      <Route path="/cliente/veiculos" element={<div style={{ textAlign: 'center', marginTop: 80 }}>Página de Veículos</div>} />
-      <Route path="/cliente/agenda" element={<div style={{ textAlign: 'center', marginTop: 80 }}>Página de Minha Agenda</div>} />
-      <Route path="/cliente/historico" element={<div style={{ textAlign: 'center', marginTop: 80 }}>Página de Histórico</div>} />
-      <Route path="/cliente/propostas" element={<div style={{ textAlign: 'center', marginTop: 80 }}>Página de Propostas</div>} />
-      <Route path="/cliente/suporte" element={<div style={{ textAlign: 'center', marginTop: 80 }}>Página de Suporte</div>} />
-      <Route path="/home_concessionaria" element={<HomeConcessionaria />} />
-      <Route path="/dashboard/estoque" element={<EstoqueVeiculos />} />
-      <Route path="/perfil" element={<PerfilCliente />} />
-      <Route path="/sobre" element={<SobreConcessionaria />} />
-      <Route path="/sobre/:id" element={<SobreConcessionaria />} />
-      <Route path="/detalhes/:id" element={<DetalhesVeiculo />} />
+    <>
+      <Toaster />
 
-      <Route path="*" element={<LandingPage />} />
-    </Routes>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/landing" element={<LandingPage />} />
+        <Route
+          path="/register"
+          element={RegisterComp ? <RegisterComp /> : <FallbackRegister />}
+        />
+        <Route
+          path="/login"
+          element={LoginComp ? <LoginComp /> : <FallbackLogin />}
+        />
+
+        <Route path="/catalog" element={<CatalogoVeiculos />} />
+        <Route path="/home_cliente" element={<HomeCliente />} />
+        <Route path="/home_concessionaria" element={<HomeConcessionaria />} />
+        <Route path="/dashboard/estoque" element={<EstoqueVeiculos />} />
+        <Route path="/dashboard/manutencao" element={<VeiculosManutencao />} />
+
+        <Route path="/perfil" element={<PerfilCliente />} />
+        <Route path="/sobre" element={<SobreConcessionaria />} />
+        <Route path="/sobre/:id" element={<SobreConcessionaria />} />
+        <Route path="/detalhes/:id" element={<DetalhesVeiculo />} />
+
+        <Route path="*" element={<LandingPage />} />
+      </Routes>
+    </>
   );
 }

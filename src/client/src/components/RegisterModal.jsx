@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import RoleMenu from "./RoleMenu";
 
-const API = (typeof import.meta !== "undefined" && import.meta.env?.VITE_API_BASE_URL) || window.__API_BASE_URL || "http://localhost:3000";
+const API = import.meta.env.VITE_API_URL;
 
 export default function RegisterModal({ onSuccess }) {
   const [firstName, setFirstName] = useState("");

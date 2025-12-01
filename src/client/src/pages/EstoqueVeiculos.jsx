@@ -1,9 +1,14 @@
 // client/src/pages/EstoqueVeiculos.jsx
 
 // --- Imports ---
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
+
+
+import HeaderConcessionaria from "../components/HeaderConcessionaria.jsx";
+import FooterConcessionaria from '../components/FooterConcessionaria.jsx'
+
 import axios from 'axios';
 import {
   CarFront,
@@ -13,7 +18,6 @@ import {
   Menu,
   X,
   Car,
-  CheckSquare,
   Wrench,
   ArrowRight,
   Edit,
@@ -32,8 +36,11 @@ import {
   ClipboardList,
   ShoppingCart,
   CreditCard,
-  ShieldCheck
+  ShieldCheck,
+  Search
 } from 'lucide-react';
+
+import { Toaster, toast } from "sonner";
 
 import "../styles/landing.css";
 import "../styles/stock.css";
@@ -274,6 +281,7 @@ export default function EstoqueVeiculos() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState('');
   const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef(null);
 
   // --- LÓGICA DO MODAL DE VEÍCULOS ---
   const [isVeiculoModalOpen, setIsVeiculoModalOpen] = useState(false);
@@ -302,7 +310,7 @@ export default function EstoqueVeiculos() {
     }
   }, [navigate, token, user]);
 
-  // Função para buscar veículos'
+  // Função para buscar veículos disponíveis
   const fetchVeiculos = async () => {
     setIsLoading(true);
     setError(null);
@@ -310,10 +318,14 @@ export default function EstoqueVeiculos() {
       const response = await axios.get(`${API_BASE_URL}/api/veiculos/estoque`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setVeiculos(response.data);
+      // Filtrar apenas veículos com status "Disponível"
+      const veiculosDisponiveis = response.data.filter(
+        veiculo => veiculo.status === 'Disponível'
+      );
+      setVeiculos(veiculosDisponiveis);
     } catch (err) {
       console.error("Erro ao buscar veículos:", err);
-      setError("Não foi possível carregar os veículos.");
+      setError("Não foi possível carregar os veículos disponíveis.");
       setVeiculos([]);
     } finally {
       setIsLoading(false);
@@ -350,10 +362,10 @@ export default function EstoqueVeiculos() {
         prevVeiculos.filter(veiculo => veiculo.id !== veiculoId)
       );
 
-      alert('Veículo excluído com sucesso!');
+      toast.success("Veículo excluído com sucesso!");
     } catch (error) {
       console.error('Erro ao excluir veículo:', error);
-      alert('Erro ao excluir veículo. Tente novamente.');
+      toast.error("Erro ao excluir veículo. Tente novamente.");
     }
   };
 
@@ -406,7 +418,7 @@ export default function EstoqueVeiculos() {
       return response.data.photo;
     } catch (error) {
       console.error('Erro no upload da imagem:', error);
-      alert('Erro ao fazer upload da imagem. Tente novamente.');
+      toast.error("Erro ao fazer upload da imagem. Tente novamente.");
       return null;
     } finally {
       setIsUploading(false);
@@ -419,13 +431,13 @@ export default function EstoqueVeiculos() {
     if (file) {
       // Validar tipo de arquivo
       if (!file.type.startsWith('image/')) {
-        alert('Por favor, selecione apenas arquivos de imagem.');
+        toast.warning("Por favor, selecione apenas arquivos de imagem.");
         return;
       }
 
       // Validar tamanho do arquivo (2MB)
       if (file.size > 2 * 1024 * 1024) {
-        alert('A imagem deve ter no máximo 2MB.');
+        toast.warning("A imagem deve ter no máximo 2MB.");
         return;
       }
 
@@ -445,11 +457,11 @@ export default function EstoqueVeiculos() {
     const file = e.target.files[0];
     if (file) {
       if (!file.type.startsWith('image/')) {
-        alert('Por favor, selecione apenas arquivos de imagem.');
+        toast.warning("Por favor, selecione apenas arquivos de imagem.");
         return;
       }
       if (file.size > 2 * 1024 * 1024) {
-        alert('A imagem deve ter no máximo 2MB.');
+        toast.warning("A imagem deve ter no máximo 2MB.");
         return;
       }
 
@@ -487,7 +499,7 @@ export default function EstoqueVeiculos() {
     });
 
     if (hasErrors) {
-      alert('Por favor, corrija os erros antes de salvar.');
+      toast.warning("Por favor, corrija os erros antes de salvar");
       return;
     }
 
@@ -514,13 +526,13 @@ export default function EstoqueVeiculos() {
       setEditErrors({});
       setEditSelectedFile(null);
       setEditPreviewUrl('');
-      alert('Veículo atualizado com sucesso!');
+      toast.success("Veículo atualizado com sucesso!");
     } catch (error) {
       console.error('Erro ao atualizar veículo:', error);
       if (error.response?.data?.errors) {
-        alert(`Erro de validação: ${error.response.data.errors.join(', ')}`);
+        toast.error(`Erro de validação: ${error.response.data.errors.join(", ")}`);
       } else {
-        alert('Erro ao atualizar veículo. Tente novamente.');
+        toast.error("Erro ao atualizar veículo");
       }
     }
   };
@@ -574,7 +586,7 @@ export default function EstoqueVeiculos() {
     setFormErrors(errors);
 
     if (!isValid) {
-      alert('Por favor, corrija os erros no formulário antes de enviar.');
+      toast.warning("Corrija os erros no formulário antes de salvar");
       return;
     }
 
@@ -626,6 +638,11 @@ export default function EstoqueVeiculos() {
       setSelectedFile(null);
       setPreviewUrl('');
 
+      // Resetar o input de arquivo
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+
       // Atualiza a lista de veículos se o modal estiver aberto
       if (isVeiculoModalOpen) {
         fetchVeiculos();
@@ -638,7 +655,7 @@ export default function EstoqueVeiculos() {
         (error.response.data.errors ? error.response.data.errors.join(', ') : error.response.data.message)
         : error.message;
       console.error('Erro ao cadastrar:', errorMessage);
-      alert(`Erro ao cadastrar veículo: ${errorMessage}`);
+      toast.error(`Erro ao cadastrar veículo: ${errorMessage}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -654,49 +671,7 @@ export default function EstoqueVeiculos() {
     <main className="lp-root">
 
       {/* 1. Navbar (Menu Superior) */}
-      <nav className="lp-header">
-        <div className="lp-container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Link to="/" className="lp-brand">
-            <CarFront />
-            CanutoMotors
-          </Link>
-
-          {/* Menu Desktop */}
-          <div className="lp-nav">
-            {navLinks.map((link) => (
-              <Link key={link.name} to={link.href} className="nav-link">
-                {link.name}
-              </Link>
-            ))}
-            <ProfileDropdown />
-
-          </div>
-
-          {/* Botão Mobile */}
-          <div className="mobile-menu-btn" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-            {isMobileMenuOpen ? <X /> : <Menu />}
-          </div>
-        </div>
-
-        {/* Menu Mobile Dropdown */}
-        <AnimatePresence>
-          {isMobileMenuOpen && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: 'auto', opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              className="mobile-menu-dropdown"
-            >
-              {navLinks.map((link) => (
-                <Link key={link.name} to={link.href} className="nav-link">
-                  {link.name}
-                </Link>
-              ))}
-              <ProfileDropdown />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </nav>
+      <HeaderConcessionaria />
 
       {/* 2. Seção Hero (Dashboard) */}
       <motion.header
@@ -769,17 +744,9 @@ export default function EstoqueVeiculos() {
           <FeatureCard
             icon={<Car size={20} />}
             title="Veículos disponíveis para venda"
-            line1="Confira os detalhes de cada veículo do estoque."
+            line1="Confira os veículos prontos para comercialização."
             linkText="Visualizar Veículos"
             onClick={handleOpenVeiculoModal}
-            accentFrom="#565656ff"
-            accentTo="#bd07d8ff"
-          />
-          <FeatureCard
-            icon={<CheckSquare size={20} />}
-            title="Veículos vendidos"
-            line1="Histórico de vendas concluídas."
-            linkText="Ver Relatório"
             accentFrom="#565656ff"
             accentTo="#bd07d8ff"
           />
@@ -788,6 +755,7 @@ export default function EstoqueVeiculos() {
             title="Veículos em manutenção"
             line1="Acompanhe veículos temporariamente indisponíveis."
             linkText="Gerenciar"
+            onClick={() => navigate('/dashboard/manutencao')}
             accentFrom="#565656ff"
             accentTo="#bd07d8ff"
           />
@@ -983,8 +951,7 @@ export default function EstoqueVeiculos() {
                   onChange={handleChange}
                 >
                   <option value="Disponível">Disponível</option>
-                  <option value="Vendido" disabled>Vendido</option>
-                  <option value="Em Manutenção" disabled>Em Manutenção</option>
+                  <option value="Em Manutenção">Em Manutenção</option>
                 </select>
               </div>
             </div>
@@ -1000,6 +967,7 @@ export default function EstoqueVeiculos() {
                   accept="image/jpeg,image/png,image/jpg,image/webp"
                   onChange={handleFileChange}
                   className="file-input"
+                  ref={fileInputRef}
                 />
                 {previewUrl && (
                   <div className="image-preview-container">
@@ -1101,11 +1069,7 @@ export default function EstoqueVeiculos() {
       </main>
 
       {/* 6. Footer */}
-      <footer className="lp-footer">
-        <div className="lp-container">
-          <small>© {new Date().getFullYear()} CanutoMotors — Todos os direitos reservados.</small>
-        </div>
-      </footer>
+      <FooterConcessionaria />
 
       {/* Modais */}
       <LoginModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
@@ -1190,6 +1154,19 @@ function VeiculoListModal({
   editPreviewUrl,
   setEditPreviewUrl
 }) {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // Filtrar veículos por busca
+  const filteredVeiculos = useMemo(() => {
+    if (!searchTerm.trim()) return veiculos;
+    const term = searchTerm.toLowerCase();
+    return veiculos.filter(v =>
+      v.marca?.toLowerCase().includes(term) ||
+      v.modelo?.toLowerCase().includes(term) ||
+      v.placa?.toLowerCase().includes(term)
+    );
+  }, [veiculos, searchTerm]);
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -1217,6 +1194,36 @@ function VeiculoListModal({
             </div>
 
             <div className="modal-body">
+              {/* Campo de Busca */}
+              {!isEditMode && (
+                <div className="search-container modal-search">
+                  <div className="search-input-wrapper">
+                    <Search size={18} className="search-icon" />
+                    <input
+                      type="text"
+                      placeholder="Buscar por placa, marca ou modelo..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="search-input"
+                    />
+                    {searchTerm && (
+                      <button
+                        className="search-clear"
+                        onClick={() => setSearchTerm('')}
+                        type="button"
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </div>
+                  {searchTerm && (
+                    <p className="search-results-count">
+                      {filteredVeiculos.length} veículo(s) encontrado(s)
+                    </p>
+                  )}
+                </div>
+              )}
+
               {isLoading && (
                 <div className="loading-state">
                   <div className="loading-spinner"></div>
@@ -1232,13 +1239,13 @@ function VeiculoListModal({
 
               {!isLoading && !error && (
                 <div className="veiculo-list">
-                  {veiculos.length === 0 ? (
+                  {filteredVeiculos.length === 0 ? (
                     <div className="empty-state">
                       <div className="empty-state-icon">🚗</div>
-                      <p>Nenhum veículo cadastrado no momento.</p>
+                      <p>{searchTerm ? 'Nenhum veículo encontrado.' : 'Nenhum veículo disponível no momento.'}</p>
                     </div>
                   ) : (
-                    veiculos.map(veiculo => (
+                    filteredVeiculos.map(veiculo => (
                       <VeiculoCard
                         key={veiculo.id}
                         veiculo={veiculo}
