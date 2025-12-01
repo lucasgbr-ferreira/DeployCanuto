@@ -1,11 +1,10 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000",
-  withCredentials: true, // se usar cookies ou sessões
+  baseURL: import.meta.env.VITE_API_URL,
+  withCredentials: true,
 });
 
-// Interceptor para adicionar token JWT automaticamente
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("authToken");
   if (token) {

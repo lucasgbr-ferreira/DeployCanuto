@@ -4,12 +4,7 @@ import "../styles/auth.css";
 
 console.log("Login loaded");
 
-const API_BASE_URL =
-  (typeof import.meta !== "undefined" &&
-    import.meta.env &&
-    import.meta.env.VITE_API_BASE_URL) ||
-  (typeof window !== "undefined" && window.__API_BASE_URL) ||
-  "http://localhost:3000";
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 export default function Login() {
   const navigate = useNavigate();
@@ -64,7 +59,7 @@ export default function Login() {
           );
           console.log("🔥 Salvando concessionária:", data.user.concessionaria);
         }
-        
+
         const role = data.user?.role;
         setIsError(false);
         setMessage("Login bem-sucedido!");
