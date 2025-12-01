@@ -15,22 +15,16 @@ import veiculoPhotoRoutes from './routes/veiculoPhotoRoutes.js';
 
 const app = express();
 
-const allowedOrigin = process.env.FRONTEND_URL;
+// 🚀 CORS totalmente liberado
+app.use(cors({ credentials: true }));
 
-// CORS CORRETO
-app.use(
-  cors({
-    origin: "*",
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true
-  })
-);
-
+// headers extras
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+  );
   next();
 });
 
