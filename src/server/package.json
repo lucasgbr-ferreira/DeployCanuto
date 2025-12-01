@@ -8,6 +8,7 @@
     "dev": "nodemon --watch src --ext js --exec \"node ./src/app.js\""
   },
   "dependencies": {
+    "dotenv": "^17.2.3",
     "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
@@ -18,11 +19,9 @@
     "react-router-dom": "^7.9.5",
     "sequelize": "^6.32.1",
     "sharp": "^0.34.4",
-    "dotenv": "^17.2.3",
     "uuid": "^13.0.0"
   },
   "devDependencies": {
-    "dotenv": "^17.2.3",
     "nodemon": "^3.0.1",
     "sequelize-cli": "^6.6.3"
   }
